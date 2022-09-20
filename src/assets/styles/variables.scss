@@ -1,0 +1,25 @@
+//color
+$root-color: #181822;
+$second-color: #292A2F;
+$white-color: #FFFFFF;
+$gray-color: #80828E;
+$table-color: lighten($gray-color, 30%);
+$green-blue-color: #02a595;
+// color
+// sizes
+$nav-width: 5rem;
+$nav-width-hover: 11rem;
+$section-title-fsz: 1.8rem;
+
+// sizes
+// shadow
+$section-shadow: 0 0 .3rem .5rem rgba(#000, .2);
+$img-shadow: 0 1 .5rem .3rem rgba(#000, .2);
+// shadow
+// gradient
+$green-gray-gradient: radial-gradient(circle farthest-corner at 1rem 0rem, $green-blue-color .5rem, $root-color 4rem);
+// gradient
+
+// z-index
+$z-nav: 10;
+// z-index

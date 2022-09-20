@@ -1,0 +1,95 @@
+.fa_currency {
+	text-align: center;
+	position: relative;
+}
+
+.ff {
+	position: absolute;
+	right: 0;
+
+	input {
+		max-width: 5rem;
+	}
+}
+
+.table_all_currencies {
+	width: 100%;
+	max-width: 70rem;
+	border-collapse: separate;
+	border-spacing: 0 1.8rem;
+	background: $second-color;
+	box-shadow: $section-shadow;
+	color: $table-color;
+	font-size: 1.2rem;
+	font-weight: 300;
+	padding: 1rem;
+	margin: 0 auto;
+	position: relative;
+	word-wrap: break-word;
+}
+
+.table_title {
+	margin: 3rem 0;
+	font-size: 1.8rem;
+	text-transform: capitalize;
+}
+
+.table_row_title {
+	width: 100%;
+	text-transform: uppercase;
+}
+
+.table_colum_title {
+	font-weight: 400;
+	padding-bottom: 1rem;
+}
+
+.currency_item_row {
+	padding: 1rem;
+}
+
+.currency_item_cell {
+	&:first-child {
+		position: relative;
+		font-weight: 400;
+	}
+
+	&:last-child {
+		cursor: pointer;
+	}
+
+	&:first-child,
+	&:last-child {
+		width: 10rem;
+	}
+}
+
+.currency_item_cell_circle {
+	border-radius: 99px;
+	width: 1rem;
+	height: 1rem;
+	position: absolute;
+
+	left: 0;
+	top: 50%;
+	transform: translateY(-50%);
+
+}
+
+.show_more_currencies {
+	color: $white-color;
+	font-weight: 300;
+	font-size: 1rem;
+	margin: 1.5rem 0;
+	text-transform: uppercase;
+	border: 1px solid $white-color;
+	background: transparent;
+	border-radius: 9rem;
+	padding: .8rem 1rem;
+	transition: all .2s linear;
+	cursor: pointer;
+
+	&:hover {
+		background: $second-color;
+	}
+}

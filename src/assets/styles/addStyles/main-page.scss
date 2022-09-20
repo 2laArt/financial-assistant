@@ -1,0 +1,82 @@
+.fa_main {
+	text-align: center;
+	padding: 1rem;
+}
+
+.fa_main_sub_title {
+	font-size: 1.8rem;
+}
+
+.fa_main_title {
+	font-size: 2.2rem;
+	margin: 1.5rem 0 3rem;
+}
+
+.fa_main_section {
+	max-width: 50%;
+	background: $second-color;
+	padding: 1rem 1.5rem;
+	border-radius: .3rem;
+	box-shadow: $section-shadow;
+	transform: scale(1.0);
+	margin: 0 auto 2rem;
+
+	&:hover .fa_main_image_bg-1 {
+		width: 0%;
+	}
+}
+
+.fa_main_section_title {
+	font-size: $section-title-fsz;
+	font-weight: 400;
+	margin: .5rem 0 1.5rem;
+	color: darken($white-color, 10%);
+}
+
+.fa_main_content {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+}
+
+.fa_main_image_wrapper {
+	width: 19.8rem;
+	height: 13.8rem;
+	box-shadow: $img-shadow;
+	position: relative;
+	overflow: hidden;
+}
+
+.fa_main_image_bg {
+	height: 100%;
+	background-size: cover;
+	background-repeat: no-repeat;
+	position: absolute;
+	top: 0;
+	transition: all 1s linear;
+
+	&-1 {
+		background-image: url("../../images/main-page-img/nft-img3.jpg");
+		left: 0;
+		width: 100%;
+		border-right: 2px solid $green-blue-color;
+		background-position: left;
+
+		z-index: 1;
+	}
+
+	&-2 {
+		background-image: url("../../images/main-page-img/nft-img4.jpg");
+		right: 0;
+		background-position: right;
+		width: 100%;
+
+	}
+}
+
+.fa_main_text {
+	margin-left: 1rem;
+	font-size: 1.4rem;
+	line-height: 1.8rem;
+	color: $gray-color;
+}

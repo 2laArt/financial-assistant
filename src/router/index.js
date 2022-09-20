@@ -1,24 +1,40 @@
-import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
+import {
+  createRouter, createWebHashHistory
+} from 'vue-router'
+
+import FaMain from "../components/fa-main/fa-main-page.vue"
+import FaCrypto from "../components/fa-crypto/fa-crypto.vue"
+import FaCurrency from "../components/fa-currency/fa-currency.vue"
+import FaTraining from "../components/fa-training/fa-training.vue"
 
 const routes = [
   {
     path: '/',
-    name: 'home',
-    component: HomeView
+    name: 'main',
+    component: FaMain
   },
   {
-    path: '/about',
-    name: 'about',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/AboutView.vue')
-  }
+    path: '/crypto',
+    name: 'crypto',
+    component: FaCrypto
+  },
+  {
+    path: '/currency',
+    name: 'currency',
+    component: FaCurrency
+  },
+  {
+    path: '/training',
+    name: 'training',
+    component: FaTraining
+  },
+
 ]
 
 const router = createRouter({
-  history: createWebHistory(process.env.BASE_URL),
+  history: createWebHashHistory('main'),
+  mode: 'history',
+  hash: false,
   routes
 })
 

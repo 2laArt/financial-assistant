@@ -1,0 +1,100 @@
+.fa_navigation {
+	font-family: 'Tomorrow', sans-serif;
+	min-height: 100vh;
+	display: inline-flex;
+	flex-direction: column;
+	justify-content: center;
+	width: $nav-width;
+	font-size: 1.2rem;
+	position: fixed;
+	top: 0;
+	left: 0;
+	transition: all .2s linear;
+	z-index: $z-nav;
+
+	&_hover {
+		background: rgba($root-color, .9);
+		width: $nav-width-hover;
+
+		.fa_nav_title {
+			display: inline-block;
+			animation: animat-title linear .4s forwards;
+		}
+
+		@keyframes animat-title {
+			0%,
+
+			50% {
+				opacity: 0;
+			}
+
+			100% {
+				opacity: 1;
+			}
+		}
+	}
+}
+
+.fa_nav_list {
+	list-style-type: none;
+}
+
+
+.fa_nav_item {
+	margin-top: 3rem;
+	border-radius: 0 2rem 2rem 0;
+	cursor: pointer;
+
+	&:first-child {
+		margin-top: 0;
+	}
+
+	&:hover,
+	&_active {
+		.fa_nav_title {
+			color: $white-color;
+		}
+
+		.fa_nav_icon {
+			g {
+				fill: $white-color;
+			}
+		}
+	}
+
+	&_active {
+		background: $green-blue-color;
+	}
+}
+
+.fa_nav_item_content {
+	width: 100%;
+	display: flex;
+	padding: .3rem 1rem;
+	align-items: center;
+}
+
+.fa_nav_title {
+	display: none;
+	opacity: 0;
+	color: $gray-color;
+	transition: all .2s linear,
+}
+
+.fa_nav_wrapper_icon {
+	margin-right: 1rem;
+}
+
+.fa_nav_icon {
+	svg {
+		width: 2rem;
+		height: 2rem;
+
+		g {
+			fill: $gray-color;
+			stroke-width: 1px;
+			transition: fill .2s linear;
+		}
+
+	}
+}
