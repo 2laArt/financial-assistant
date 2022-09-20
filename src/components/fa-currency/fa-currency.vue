@@ -4,7 +4,7 @@
       <input
         class="curVal"
         type="text"
-        v-model="currentFiat"
+        v-model="filter"
       >
       <button @click="clickBtn">click</button>
     </div>
@@ -14,7 +14,7 @@
       <table class="table_all_currencies">
 
         <caption class="table_title">
-          Table of all currencies to {{currentFiat}}
+          Table of all currencies to {{selectedFiat}}
         </caption>
 
         <tr class="table_row_title">
@@ -25,7 +25,7 @@
 
         <tr
           class="currency_item_row"
-          v-for=" (item, i) in  currenciesList"
+          v-for=" (item, i) in  paginatedCurrencies"
           :key="item"
         >
           <td class="currency_item_cell">
@@ -50,7 +50,7 @@
           >
             {{`${item.price}`}}
             <br v-if="wrapWordCur">
-            {{` ${currentFiatUp}`}}
+            {{` ${selectedFiat}`}}
           </td>
         </tr>
 
@@ -79,18 +79,15 @@ export default {
   name: "fa-currency",
   data() {
     return {
-      currentFiat: "USD",
-      numberOfCurrencies: 160,
+      filter: "",
+      selectedFiat: "USD",
+      numberOfCurrencies: 10,
       listAllFiat: [],
       wrapWordCur: false,
     };
   },
   created() {
-    const isLoadPrices = new Promise((resolve) =>
-      resolve(Object.keys(this.allPirces).length === 0)
-    );
     const f = async () => {
-      await isLoadPrices;
       await this.xGetlLstAllCurrency();
       await this.xAddPricesToCurrencies();
       await this.setNormalizePrices();
@@ -110,17 +107,21 @@ export default {
   watch: {},
   computed: {
     ...mapGetters({
-      allPirces: "PRICE_ALL_ITEM",
       currencies: "CURRENCIES",
     }),
-    currenciesList() {
-      return this.listAllFiat.slice(0, this.numberOfCurrencies);
+    filteredListCurrencies() {
+      const filterKey = ["id", "name"];
+      return this.listAllFiat.filter((item) => {
+        return filterKey.some((key) => {
+          return item[key].toUpperCase().includes(this.filter.toUpperCase());
+        });
+      });
     },
-    currentFiatUp() {
-      return this.currentFiat.toUpperCase();
+    paginatedCurrencies() {
+      return this.filteredListCurrencies.slice(0, this.numberOfCurrencies);
     },
     isFullListCurrencies() {
-      return this.currencies.length === this.numberOfCurrencies;
+      return this.filteredListCurrencies.length <= this.numberOfCurrencies;
     },
   },
   methods: {
@@ -167,7 +168,7 @@ export default {
       });
     },
     newNumberOfCurrencies() {
-      if (this.listAllFiat.length > this.numberOfCurrencies + 10) {
+      if (this.filteredListCurrencies.length > this.numberOfCurrencies + 10) {
         this.numberOfCurrencies += 10;
         return;
       } else if (!this.isFullListCurrencies) {
