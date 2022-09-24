@@ -40,7 +40,7 @@ export default {
   navigation: [
     { title: "main", icon: iconHome },
     { title: "crypto", icon: iconCrypto },
-    { title: "currency", icon: iconCurrency },
+    { title: "fiat", icon: iconCurrency },
     { title: "training", icon: iconTraining },
   ],
   data() {

@@ -1,10 +1,10 @@
 <template>
-  <div class="fa_cripto">
+  <div class="fa_currency">
     <fa-table
+      :infoCurrencies="currencies"
       :titleTable="titleTable"
       :headersColum="headersColum"
       :selectedFiat="selectedFiat"
-      :infoCurrencies="crypto"
     />
   </div>
 </template>
@@ -12,26 +12,29 @@
 <script>
 import { mapGetters } from "vuex";
 import FaTable from "../repeating-components/table/fa-table.vue";
+
 export default {
-  name: "fa-crypto",
+  name: "fa-currency",
   components: {
     FaTable,
   },
   data() {
     return {
       selectedFiat: "USD",
-      titleTable: "Crypto",
-      headersColum: ["marker", "full name", "price"],
-      // infoCurrencies: [{ id: "a", name: "a", price: "11", color: "200" }],
+      titleTable: "Table of all currencies to",
+      headersColum: ["Marker", "Full Title", "Price"],
     };
   },
-  mounted() {
-    // console.log(this.crypto);
-  },
+  created() {},
+  mounted() {},
+  ummount() {},
+  beforeUnmount() {},
+  watch: {},
   computed: {
     ...mapGetters({
-      crypto: "CRYPTO",
+      currencies: "CURRENCIES",
     }),
   },
+  methods: {},
 };
 </script>
