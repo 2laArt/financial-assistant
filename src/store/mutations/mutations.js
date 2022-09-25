@@ -21,5 +21,8 @@ export default {
 		return state.currencies.map(item =>
 			item.price = state.priceAllItems[item.id]
 		)
-	}
+	},
+	SET_CANDLES_TO_STATE(state, dataCandles) {
+		return state.candles = dataCandles
+	},
 }
