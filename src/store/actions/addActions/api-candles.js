@@ -7,7 +7,7 @@ export default {
 				`https://api.exchange.coinbase.com/products/${pair}/candles?granularity=60&start=${dateStart}&end=${dateEnd}`
 			);
 			const dataCandles = await request.json()
-			console.log(dataCandles)
+			// console.log(dataCandles)
 			return commit("SET_CANDLES_TO_STATE", dataCandles)
 		}
 		catch (e) {
