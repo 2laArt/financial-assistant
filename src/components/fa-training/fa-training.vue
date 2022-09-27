@@ -38,14 +38,14 @@ export default {
       const width = (canvas.width = 400);
       const height = (canvas.height = 200);
       const middleY = height / 2;
-      const candlesWidth = (width / this.numCandles).toFixed(1);
+      const candlesWidth = (width / this.numCandles - 2).toFixed(1);
       const range = this.middle - this.low;
       console.log(range);
-      this.candlesShowTest(range, middleY, candlesWidth);
-      // this.drawCandle(true, candlesWidth * 0, middleY, candlesWidth, 50);
-      // this.drawCandle(false, candlesWidth * 1, middleY, candlesWidth, 30);
-      // this.drawCandle(true, candlesWidth * 2, middleY, candlesWidth, 40);
 
+      this.candlesShowTest(range, middleY, candlesWidth);
+      // this.drawCandle(true, candlesWidth * 0, middleY, candlesWidth, 70);
+      // this.drawCandle(true, candlesWidth * 1 + 5, middleY, candlesWidth, 70);
+      // this.drawCandle(true, candlesWidth * 2, middleY, candlesWidth, 70);
       this.drawMiddleLine(width, middleY);
     },
     candlesShowTest(range, middleY, candlesWidth) {
@@ -53,8 +53,9 @@ export default {
         let curRange = Math.abs(this.middle - item[4]);
         let curInd = curRange / range;
         let heigth = middleY * curInd;
-        let up = this.middle > item[4];
-        this.drawCandle(up, candlesWidth * i, middleY, candlesWidth, heigth);
+        let up = this.middle < item[4];
+        let x = candlesWidth * i + i * 2;
+        this.drawCandle(up, x, middleY, candlesWidth, heigth);
       });
     },
     drawCandle(up, x, y, width, height) {

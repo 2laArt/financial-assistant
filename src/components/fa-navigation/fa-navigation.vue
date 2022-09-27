@@ -35,6 +35,7 @@ import iconHome from "./fa-nav-icon/fa-nav-icon-home.vue";
 import iconCrypto from "./fa-nav-icon/fa-nav-icon-crypto.vue";
 import iconCurrency from "./fa-nav-icon/fa-nav-icon-currency.vue";
 import iconTraining from "./fa-nav-icon/fa-nav-icon-training.vue";
+import iconChart from "./fa-nav-icon/fa-nav-icon-chart.vue";
 export default {
   name: "fa-navigation",
   navigation: [
@@ -42,6 +43,7 @@ export default {
     { title: "crypto", icon: iconCrypto },
     { title: "currency", icon: iconCurrency },
     { title: "training", icon: iconTraining },
+    { title: "chart", icon: iconChart },
   ],
   data() {
     return {
