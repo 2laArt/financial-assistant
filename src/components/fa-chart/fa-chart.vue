@@ -2,16 +2,42 @@
   <div class="fa_chart">
     <h3 class="fa_training_title">Chart</h3>
     <div class="cord_mouse">
-      {{`x: ${mouse.x} - y: ${mouse.y}`}}
+      <!-- {{`x: ${mouse.x} - y: ${mouse.y}`}} -->
     </div>
-    <div>info: {{curPrice}}</div>
-    <canvas
-      id="canvasChart"
-      @mousemove="moveMouseOnCanvas($event)"
-      @mouseover="chartHover = true"
-      @mouseout="chartHover = false"
-    >
-    </canvas>
+    <div class="box">
+      <div
+        class="info_TEST"
+        v-show="chartHover"
+        :style="{
+        top: posInfo? '50%':'0'
+      }"
+      >
+        TIME: {{timeBucketStart}} <br>
+        Lowest price during the bucket interval:
+        <span class="main_data">
+          {{tradingData.low}}
+        </span>
+
+        <br>
+        Highest price during the bucket interval:
+        <span class="main_data">
+          {{tradingData.high}}
+        </span>
+        <br>
+        Volume of trading activity during the bucket interval: <span class="main_data">
+          {{tradingData.vol}}
+        </span>
+      </div>
+      <canvas
+        id="canvasChart"
+        @mousemove="moveMouseOnCanvas($event)"
+        @mouseover="chartHover = true"
+        @mouseout="chartHover = false"
+      >
+
+      </canvas>
+    </div>
+
   </div>
 </template>
 
@@ -23,7 +49,7 @@ export default {
   name: "fa-training",
   data() {
     return {
-      curPrice: 0,
+      tradingData: {},
       curpair: "BTC-USD",
       candles: [],
       numCandles: 0,
@@ -44,6 +70,13 @@ export default {
   },
   computed: {
     ...mapGetters(["CANDLES"]),
+    timeBucketStart() {
+      if (!this.tradingData.time) return;
+      return new Date(this.tradingData.time * 1000);
+    },
+    posInfo() {
+      return this.mouse.y < 100;
+    },
   },
   watch: {
     chartHover(val) {
@@ -86,7 +119,12 @@ export default {
       }
 
       if (this.chartHover && this.mouse.x) {
-        this.curPrice = this.chart.noName(this.mouse.x);
+        const curRadius = 3;
+        const data = this.chart.selectedData(this.mouse.x);
+        if (data) {
+          this.tradingData = data.tradingData;
+          this.chart.drawCircle(data.x, data.y, curRadius, data.color);
+        }
       }
       this.chart.drawHorizonLine(this.mouse.x, this.mouse.y);
       this.chart.drawVerticalLine(this.mouse.x, this.mouse.y);
@@ -101,7 +139,7 @@ export default {
       }-${date.getDate()}T${date.getHours()}:${date.getMinutes()}:00`;
     },
     getAverageCost() {
-      const sortArr = (cb) => this.candles.sort((a, b) => cb(a, b))[0];
+      const sortArr = (cb) => [...this.candles].sort((a, b) => cb(a, b))[0];
       const lowArr = sortArr((a, b) => a[1] - b[1]) ?? [1, 2, 3];
       const highArr = sortArr((a, b) => b[2] - a[2]) ?? [1, 2, 3];
       this.lowPrice = lowArr[1];
@@ -119,7 +157,7 @@ export default {
         dateStart,
         dateEnd,
       });
-      this.candles = this.CANDLES;
+      this.candles = this.CANDLES.sort((a, b) => a[0] - b[0]);
       this.numCandles = this.candles.length;
       this.getAverageCost();
 
