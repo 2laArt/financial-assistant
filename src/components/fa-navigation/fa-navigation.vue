@@ -12,7 +12,6 @@
           v-for=" item in $options.navigation"
           :key="item"
           :class="{fa_nav_item_active:item.title===isActive}"
-          @click="isActive=item.title"
         >
           <router-link :to="{name:item.title}">
             <div class="fa_nav_item_content">
@@ -49,7 +48,9 @@ export default {
       isHoverOnMenu: false,
     };
   },
-  mounted() {},
+  mounted() {
+    this.$route.name = "main";
+  },
   watch: {
     $route() {
       this.isActive = this.$route.name;

@@ -1,8 +1,9 @@
-.fa_currency {
+.section_all_currencies {
+	text-align: center;
 	position: relative;
 }
 
-.ff {
+.search_token {
 	position: absolute;
 	right: 0;
 
@@ -11,10 +12,6 @@
 	}
 
 	z-index: 1;
-}
-
-.section_all_currencies {
-	text-align: center;
 }
 
 .table_all_currencies {

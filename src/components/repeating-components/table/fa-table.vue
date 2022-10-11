@@ -1,8 +1,7 @@
 <template>
   <section class="section_all_currencies">
-    <div class="ff">
+    <div class="search_token">
       <input
-        class="curVal"
         type="text"
         v-model="filter"
       >

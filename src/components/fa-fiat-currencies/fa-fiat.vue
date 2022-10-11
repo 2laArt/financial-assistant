@@ -21,7 +21,7 @@ export default {
   data() {
     return {
       selectedFiat: "USD",
-      titleTable: "Table of all currencies to",
+      titleTable: "Table of all fiat currencies to",
       headersColum: ["Marker", "Full Title", "Price"],
     };
   },
