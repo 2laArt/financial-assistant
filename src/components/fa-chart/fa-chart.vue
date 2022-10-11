@@ -2,7 +2,6 @@
   <div class="fa_chart">
     <h3 class="fa_training_title">Chart</h3>
     <div class="cord_mouse">
-      <!-- {{`x: ${mouse.x} - y: ${mouse.y}`}} -->
     </div>
     <div class="box">
       <div
