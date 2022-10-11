@@ -8,7 +8,7 @@ export default createStore({
     priceAllItems: {},
     currencies: [],
     crypto: [],
-    x: [],
+    candles: []
   },
   getters,
   mutations,

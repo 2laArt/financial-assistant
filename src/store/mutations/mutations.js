@@ -19,10 +19,20 @@ export default {
 		return state.crypto = filteredByKeys(currenciesInfo, keys)
 	},
 	ADD_PRICES_TO_CURRENCIES(state) {
+<<<<<<< HEAD
 		Object.entries(state.priceAllItems).forEach(item => {
 			state.currencies.map(i => addPrice(i, item))
 			state.crypto.map(i => addPrice(i, item))
 
 		})
 	}
+=======
+		return state.currencies.map(item =>
+			item.price = state.priceAllItems[item.id]
+		)
+	},
+	SET_CANDLES_TO_STATE(state, dataCandles) {
+		return state.candles = dataCandles
+	},
+>>>>>>> outer-class-chart
 }

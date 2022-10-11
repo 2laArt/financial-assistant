@@ -6,6 +6,7 @@ import FaMain from "../components/fa-main/fa-main-page.vue"
 import FaCrypto from "../components/fa-crypto/fa-crypto.vue"
 import FaFiat from "../components/fa-fiat-currencies/fa-fiat.vue"
 import FaTraining from "../components/fa-training/fa-training.vue"
+import FaChart from "../components/fa-chart/fa-chart.vue"
 
 const routes = [
   {
@@ -27,6 +28,11 @@ const routes = [
     path: '/training',
     name: 'training',
     component: FaTraining
+  },
+  {
+    path: '/chart',
+    name: 'chart',
+    component: FaChart,
   },
 
 ]

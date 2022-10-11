@@ -41,6 +41,7 @@
       "parser": "@babel/eslint-parser"
     },
     "rules": {
+      "no-mixed-spaces-and-tabs": 0,
       "no-console": 1,
       "no-debugger": 1
     }
