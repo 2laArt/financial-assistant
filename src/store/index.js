@@ -5,6 +5,7 @@ import actions from './actions/actions'
 
 export default createStore({
   state: {
+    loadedPage: false,
     priceAllItems: {},
     currencies: [],
     crypto: [],

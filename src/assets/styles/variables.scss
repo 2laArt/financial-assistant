@@ -7,8 +7,8 @@ $table-color: lighten($gray-color, 30%);
 $green-blue-color: #02a595;
 // color
 // sizes
-$nav-width: 5rem;
-$nav-width-hover: 11rem;
+$nav-width: 3.5rem;
+$nav-width-hover: 10rem;
 $section-title-fsz: 1.8rem;
 
 // sizes
@@ -22,4 +22,5 @@ $green-gray-gradient: radial-gradient(circle farthest-corner at 1rem 0rem, $gree
 
 // z-index
 $z-nav: 10;
+$z-loader: 100;
 // z-index

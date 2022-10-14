@@ -148,7 +148,7 @@ export default {
     async startingWork() {
       const pair = this.curpair;
       const dateNow = new Date(Date.now());
-      const datePast = new Date(Date.now() - 36e5 * 4);
+      const datePast = new Date(Date.now() - 36e5 * 5);
       const dateStart = this.createDateString(datePast);
       const dateEnd = this.createDateString(dateNow);
       await this.GET_CANDLES_TO_CURRENCY_PAIR_FROM_API({

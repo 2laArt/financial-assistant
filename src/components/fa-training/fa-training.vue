@@ -40,12 +40,8 @@ export default {
       const middleY = height / 2;
       const candlesWidth = (width / this.numCandles - 2).toFixed(1);
       const range = this.middle - this.low;
-      console.log(range);
 
       this.candlesShowTest(range, middleY, candlesWidth);
-      // this.drawCandle(true, candlesWidth * 0, middleY, candlesWidth, 70);
-      // this.drawCandle(true, candlesWidth * 1 + 5, middleY, candlesWidth, 70);
-      // this.drawCandle(true, candlesWidth * 2, middleY, candlesWidth, 70);
       this.drawMiddleLine(width, middleY);
     },
     candlesShowTest(range, middleY, candlesWidth) {
@@ -88,8 +84,6 @@ export default {
       this.low = lowArr[1];
       this.high = highArr[2];
       this.middle = Math.floor((this.low + this.high) / 2);
-      console.log(this.low, this.high);
-      console.log(this.middle);
     },
     async startingWork() {
       const pair = this.curpair;

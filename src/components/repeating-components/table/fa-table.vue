@@ -4,8 +4,9 @@
       <input
         type="text"
         v-model="filter"
+        placeholder="search"
       >
-      <button @click="clickBtn">click</button>
+      <button @click="clickBtn">&#x1F50E;&#xFE0E;</button>
     </div>
 
     <table class="table_all_currencies">
@@ -26,7 +27,7 @@
 
       <tr
         class="currency_item_row"
-        v-for=" (item, i) in  paginatedCurrencies"
+        v-for=" item in  paginatedCurrencies"
         :key="item"
       >
         <td class="currency_item_cell">
@@ -46,7 +47,7 @@
         </td>
         <td
           class="currency_item_cell"
-          @click="showFullPrice(i)"
+          @click="changePriceLength(item)"
           :style="{'color':typeof item.price === 'number'?'#fff':'inhiret'}"
         >
           {{`${item.price}`}}
@@ -158,13 +159,11 @@ export default {
         return;
       }
     },
-    showFullPrice(i) {
-      if (this.listAllFiat[i].price === this.infoCurrencies[i].price) {
-        return (this.listAllFiat[i].price = this.normalizePrice(
-          this.listAllFiat[i].price
-        ));
-      }
-      return (this.listAllFiat[i].price = this.infoCurrencies[i].price);
+    changePriceLength(item) {
+      const fullPrice = this.infoCurrencies.find((i) => i.id === item.id).price;
+      if (fullPrice === item.price) {
+        item.price = this.normalizePrice(item.price);
+      } else item.price = fullPrice;
     },
     resizeWindow() {
       this.wrapWordCur = window.innerWidth < 550;
@@ -175,7 +174,7 @@ export default {
     this.resizeWindow();
     window.addEventListener("resize", this.resizeWindow);
   },
-  unmount() {
+  unmounted() {
     window.removeEventListener("resize", this.resizeWindow);
   },
 };

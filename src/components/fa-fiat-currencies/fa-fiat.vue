@@ -1,10 +1,11 @@
 <template>
   <div class="fa_currency">
     <fa-table
-      :infoCurrencies="currencies"
+      v-if="LOADED_PAGE"
       :titleTable="titleTable"
       :headersColum="headersColum"
       :selectedFiat="selectedFiat"
+      :infoCurrencies="CURRENCIES"
     />
   </div>
 </template>
@@ -25,15 +26,8 @@ export default {
       headersColum: ["Marker", "Full Title", "Price"],
     };
   },
-  created() {},
-  mounted() {},
-  ummount() {},
-  beforeUnmount() {},
-  watch: {},
   computed: {
-    ...mapGetters({
-      currencies: "CURRENCIES",
-    }),
+    ...mapGetters(["CURRENCIES", "LOADED_PAGE"]),
   },
   methods: {},
 };

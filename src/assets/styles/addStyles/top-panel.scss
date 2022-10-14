@@ -1,0 +1,37 @@
+.fa_top_panel {
+	width: 100%;
+	background: $root-color;
+}
+
+.search {
+
+	display: inline-block;
+	margin-top: 1rem;
+	position: relative;
+
+	input {
+		max-width: 10rem;
+		padding: .5rem 2.2rem;
+		background: transparent;
+		border: 1px solid #fff;
+		border-radius: 2rem;
+		color: #fff;
+		text-align: center;
+	}
+
+	button {
+		display: inline-block;
+		background: transparent;
+		color: #fff;
+		line-height: 0;
+		border: transparent;
+		position: absolute;
+		right: .5rem;
+		top: 50%;
+		transform: translateY(-50%);
+		cursor: pointer;
+	}
+
+
+
+}

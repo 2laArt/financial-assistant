@@ -1,10 +1,11 @@
 <template>
   <div class="fa_cripto">
     <fa-table
+      v-if="LOADED_PAGE"
       :titleTable="titleTable"
       :headersColum="headersColum"
       :selectedFiat="selectedFiat"
-      :infoCurrencies="crypto"
+      :infoCurrencies="CRYPTO"
     />
   </div>
 </template>
@@ -22,16 +23,10 @@ export default {
       selectedFiat: "USD",
       titleTable: "Crypto",
       headersColum: ["marker", "full name", "price"],
-      // infoCurrencies: [{ id: "a", name: "a", price: "11", color: "200" }],
     };
   },
-  mounted() {
-    // console.log(this.crypto);
-  },
   computed: {
-    ...mapGetters({
-      crypto: "CRYPTO",
-    }),
+    ...mapGetters(["CRYPTO", "LOADED_PAGE"]),
   },
 };
 </script>

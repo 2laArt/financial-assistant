@@ -17,7 +17,15 @@ export default {
 			item.price = state.priceAllItems[item.id]
 		)
 	},
+	ADD_PRICES_TO_CRYPTO(state) {
+		return state.crypto.map(item =>
+			item.price = state.priceAllItems[item.id]
+		)
+	},
 	SET_CANDLES_TO_STATE(state, dataCandles) {
 		return state.candles = dataCandles
 	},
+	IS_LOADED_PAGE(state) {
+		return state.loadedPage = true
+	}
 }

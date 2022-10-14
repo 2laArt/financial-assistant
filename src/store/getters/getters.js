@@ -13,4 +13,7 @@ export default {
 	CANDLES(state) {
 		return state.candles
 	},
+	LOADED_PAGE(state) {
+		return state.loadedPage
+	},
 }
