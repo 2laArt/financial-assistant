@@ -14,18 +14,21 @@ export default {
 	},
 	ADD_PRICES_TO_CURRENCIES(state) {
 		return state.currencies.map(item =>
-			item.price = state.priceAllItems[item.id]
+			item.price = state.priceAllItems[item.id] / 1
 		)
 	},
 	ADD_PRICES_TO_CRYPTO(state) {
 		return state.crypto.map(item =>
-			item.price = state.priceAllItems[item.id]
+			item.price = state.priceAllItems[item.id] / 1
 		)
 	},
 	SET_CANDLES_TO_STATE(state, dataCandles) {
 		return state.candles = dataCandles
 	},
-	IS_LOADED_PAGE(state) {
-		return state.loadedPage = true
+	IS_LOADED_PAGE(state, newValue) {
+		return state.loadedPage = newValue
+	},
+	CHANGE_SELECTED_CURRENCY(state, newValue) {
+		return state.selectedCurrency = newValue
 	}
 }

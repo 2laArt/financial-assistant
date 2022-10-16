@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;700&family=Tomorrow&display=swap');
 
 @import url('./addStyles/navigation.scss');
-@import url('./addStyles/top-panel.scss');
+@import url('./addStyles/header.scss');
 @import url('./addStyles/main-page.scss');
 @import url('./addStyles/training.scss');
 @import url('./addStyles/chart.scss');
@@ -39,11 +39,16 @@ img {
 	width: 100%;
 	min-height: 100vh;
 	background: $root-color;
-	padding: .5rem 2rem;
-	padding-left: $nav-width + 1rem;
+
 }
 
 .fa_root {
 	position: relative;
 	overflow: hidden;
+}
+
+.fa_root_container {
+	padding: .5rem 2rem;
+	padding-left: $nav-width + .5rem;
+	padding-top: $top-panel-height;
 }

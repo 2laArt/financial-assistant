@@ -12,7 +12,7 @@
     <table class="table_all_currencies">
 
       <caption class="table_title">
-        {{titleTable}} {{selectedFiat}}
+        {{titleTable}} {{SELECTED_CURRENCY}}
       </caption>
 
       <tr class="table_row_title">
@@ -48,11 +48,11 @@
         <td
           class="currency_item_cell"
           @click="changePriceLength(item)"
-          :style="{'color':typeof item.price === 'number'?'#fff':'inhiret'}"
+          :style="{'color':typeof item.price === 'number'?'#fff':'#ccc'}"
         >
           {{`${item.price}`}}
           <br v-if='wrapWordCur'>
-          {{` ${selectedFiat}`}}
+          {{` ${SELECTED_CURRENCY}`}}
         </td>
       </tr>
 
@@ -73,6 +73,7 @@
 </template>
 
 <script>
+import { mapGetters } from "vuex";
 export default {
   name: "fa-table",
   props: {
@@ -81,11 +82,11 @@ export default {
       required: false,
       default: "Table",
     },
-    selectedFiat: {
-      type: String,
-      required: false,
-      default: "USD",
-    },
+    // selectedFiat: {
+    //   type: String,
+    //   required: false,
+    //   default: "USD",
+    // },
     headersColum: {
       type: Array,
       required: true,
@@ -104,6 +105,7 @@ export default {
     };
   },
   computed: {
+    ...mapGetters(["SELECTED_CURRENCY"]),
     filteredListCurrencies() {
       const filterKey = ["id", "name"];
       return this.listAllFiat.filter((item) => {
@@ -128,17 +130,20 @@ export default {
       return str;
     },
     normalizePrice(price) {
-      const afterPoint = price.split(".")[1];
-      if (typeof afterPoint === "string") {
-        if (afterPoint.length > 3) {
-          return (
-            (price > 1
-              ? Number(price).toFixed(3)
-              : Number(price).toPrecision(3)) + "..."
-          );
-        }
-      }
-      return price;
+      // const afterPoint = "" + price.split(".")[1];
+      // if (typeof afterPoint === "string") {
+      //   if (afterPoint.length > 3) {
+      //     return (
+      //       (price > 1
+      //         ? Number(price).toFixed(3)
+      //         : Number(price).toPrecision(3)) + "..."
+      //     );
+      //   }
+      if (price > 1) {
+        return price.toFixed(1);
+      } else return price.toPrecision(3);
+      // }
+      // return price;
     },
     setNormalizePrices() {
       this.infoCurrencies.forEach((item) => {

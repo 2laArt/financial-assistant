@@ -4,7 +4,6 @@
       v-if="LOADED_PAGE"
       :titleTable="titleTable"
       :headersColum="headersColum"
-      :selectedFiat="selectedFiat"
       :infoCurrencies="CRYPTO"
     />
   </div>
@@ -20,7 +19,6 @@ export default {
   },
   data() {
     return {
-      selectedFiat: "USD",
       titleTable: "Crypto",
       headersColum: ["marker", "full name", "price"],
     };

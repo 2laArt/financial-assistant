@@ -6,6 +6,7 @@
 	justify-content: center;
 	width: $nav-width;
 	font-size: 1.2rem;
+	padding-top: $top-panel-height;
 	position: fixed;
 	top: 0;
 	left: 0;
@@ -33,6 +34,10 @@
 			}
 		}
 	}
+
+	@include breakpoint($sm) {
+		font-size: 1rem;
+	}
 }
 
 .fa_nav_list {
@@ -41,7 +46,7 @@
 
 
 .fa_nav_item {
-	margin-top: 3rem;
+	margin-top: 2rem;
 	border-radius: 0 2rem 2rem 0;
 	cursor: pointer;
 
@@ -64,6 +69,10 @@
 
 	&_active {
 		background: $green-blue-color;
+	}
+
+	@include breakpoint($sm) {
+		margin-top: 1rem;
 	}
 }
 
@@ -94,6 +103,11 @@
 			fill: $gray-color;
 			stroke-width: 1px;
 			transition: fill .2s linear;
+		}
+
+		@include breakpoint($sm) {
+			width: 1.5rem;
+			height: 1.5rem;
 		}
 
 	}

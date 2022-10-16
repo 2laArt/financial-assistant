@@ -10,7 +10,7 @@ $green-blue-color: #02a595;
 $nav-width: 3.5rem;
 $nav-width-hover: 10rem;
 $section-title-fsz: 1.8rem;
-
+$top-panel-height: 4rem;
 // sizes
 // shadow
 $section-shadow: 0 0 .3rem .5rem rgba(#000, .2);
@@ -22,5 +22,17 @@ $green-gray-gradient: radial-gradient(circle farthest-corner at 1rem 0rem, $gree
 
 // z-index
 $z-nav: 10;
+$z-top-panel: 20;
 $z-loader: 100;
 // z-index
+
+// breakpoint
+$sm: 53rem;
+// breakpoint
+
+// mixin
+@mixin breakpoint($bp) {
+	@media (max-width: $bp) {
+		@content;
+	}
+}

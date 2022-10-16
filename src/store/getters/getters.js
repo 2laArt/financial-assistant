@@ -16,4 +16,7 @@ export default {
 	LOADED_PAGE(state) {
 		return state.loadedPage
 	},
+	SELECTED_CURRENCY(state) {
+		return state.selectedCurrency;
+	}
 }
