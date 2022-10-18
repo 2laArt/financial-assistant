@@ -11,6 +11,7 @@ export default createStore({
     crypto: [],
     candles: [],
     selectedCurrency: "USD",
+    filter: "",
   },
   getters,
   mutations,

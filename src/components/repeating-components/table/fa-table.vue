@@ -1,13 +1,13 @@
 <template>
   <section class="section_all_currencies">
-    <div class="search_token">
+    <!-- <div class="search_token">
       <input
         type="text"
         v-model="filter"
         placeholder="search"
       >
       <button @click="clickBtn">&#x1F50E;&#xFE0E;</button>
-    </div>
+    </div> -->
 
     <table class="table_all_currencies">
 
@@ -48,8 +48,8 @@
         <td
           class="currency_item_cell"
           @click="changePriceLength(item)"
-          :style="{'color':typeof item.price === 'number'?'#fff':'#ccc'}"
         >
+          <!--  :style="{'color':typeof item.price === 'number'?'#fff':'#ccc'}" -->
           {{`${item.price}`}}
           <br v-if='wrapWordCur'>
           {{` ${SELECTED_CURRENCY}`}}
@@ -82,11 +82,6 @@ export default {
       required: false,
       default: "Table",
     },
-    // selectedFiat: {
-    //   type: String,
-    //   required: false,
-    //   default: "USD",
-    // },
     headersColum: {
       type: Array,
       required: true,
@@ -105,7 +100,7 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(["SELECTED_CURRENCY"]),
+    ...mapGetters(["SELECTED_CURRENCY", "FILTER"]),
     filteredListCurrencies() {
       const filterKey = ["id", "name"];
       return this.listAllFiat.filter((item) => {
@@ -130,24 +125,13 @@ export default {
       return str;
     },
     normalizePrice(price) {
-      // const afterPoint = "" + price.split(".")[1];
-      // if (typeof afterPoint === "string") {
-      //   if (afterPoint.length > 3) {
-      //     return (
-      //       (price > 1
-      //         ? Number(price).toFixed(3)
-      //         : Number(price).toPrecision(3)) + "..."
-      //     );
-      //   }
       if (price > 1) {
-        return price.toFixed(1);
-      } else return price.toPrecision(3);
-      // }
-      // return price;
+        return Number(price.toFixed(1));
+      } else return Number(price.toPrecision(3));
     },
     setNormalizePrices() {
       this.infoCurrencies.forEach((item) => {
-        if (item.price !== undefined) {
+        if (item.price) {
           const price = this.normalizePrice(item.price);
           this.listAllFiat.push({ ...item, price });
           return;
@@ -158,14 +142,13 @@ export default {
     newNumberOfCurrencies() {
       if (this.filteredListCurrencies.length > this.numberOfCurrencies + 10) {
         this.numberOfCurrencies += 10;
-        return;
       } else if (!this.isFullListCurrencies) {
         this.numberOfCurrencies = this.listAllFiat.length;
-        return;
       }
     },
     changePriceLength(item) {
       const fullPrice = this.infoCurrencies.find((i) => i.id === item.id).price;
+      if (typeof item.price === "string") return;
       if (fullPrice === item.price) {
         item.price = this.normalizePrice(item.price);
       } else item.price = fullPrice;
@@ -174,9 +157,15 @@ export default {
       this.wrapWordCur = window.innerWidth < 550;
     },
   },
+  watch: {
+    FILTER(val) {
+      this.filter = val;
+    },
+  },
   mounted() {
     this.setNormalizePrices();
     this.resizeWindow();
+    this.filter = this.FILTER;
     window.addEventListener("resize", this.resizeWindow);
   },
   unmounted() {

@@ -18,6 +18,13 @@
 	margin: 0 auto;
 }
 
+.header_item {
+	flex: 1 1 0;
+
+	&:last-child {
+		text-align: right;
+	}
+}
 
 .search {
 

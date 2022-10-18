@@ -1,5 +1,4 @@
 
-
 export default {
 	CRYPTO(state) {
 		return state.crypto
@@ -18,5 +17,8 @@ export default {
 	},
 	SELECTED_CURRENCY(state) {
 		return state.selectedCurrency;
-	}
+	},
+	FILTER(state) {
+		return state.filter;
+	},
 }

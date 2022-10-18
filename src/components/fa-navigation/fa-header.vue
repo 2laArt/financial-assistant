@@ -38,16 +38,19 @@ export default {
     selectedCurrency(val) {
       this.CHANGE_SELECTED_CURRENCY(val);
     },
+    filter(val) {
+      this.SET_NEW_FILTER(val);
+    },
   },
   computed: {
-    ...mapGetters(["SELECTED_CURRENCY"]),
+    ...mapGetters(["SELECTED_CURRENCY", "FILTER"]),
   },
   methods: {
-    ...mapMutations(["CHANGE_SELECTED_CURRENCY"]),
+    ...mapMutations(["CHANGE_SELECTED_CURRENCY", "SET_NEW_FILTER"]),
   },
   mounted() {
     this.selectedCurrency = this.SELECTED_CURRENCY;
-    // console.log(this.SELECTED_CURRENCY);
+    this.filter = this.FILTER;
   },
 };
 </script>

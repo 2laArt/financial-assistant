@@ -6,6 +6,7 @@ export default {
 		try {
 			const request = await fetch(`https://api.coinbase.com/v2/exchange-rates?currency=${token}`)
 			const data = await request.json()
+			// console.log(data.data.rates)
 			return commit('SET_ALL_PRICES_TO_STATE', data.data.rates)
 		}
 		catch (e) {
