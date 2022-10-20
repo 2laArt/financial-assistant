@@ -37,7 +37,7 @@ export default {
     },
   },
   computed: {
-    ...mapGetters(["SELECTED_CURRENCY"]),
+    ...mapGetters(["SELECTED_CURRENCY", "LOADED_PAGE"]),
   },
   methods: {
     ...mapActions([

@@ -26,6 +26,48 @@
 	}
 }
 
+.logo {
+	font-size: 1.7rem;
+	font-weight: 500;
+	position: relative;
+	user-select: none;
+	cursor: pointer;
+
+	&::after {
+		content: "";
+		display: block;
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		width: 3.5rem;
+		height: 3.5rem;
+		transform: translate(-50%, -50%);
+		border-top: 2px solid $green-blue-color;
+		border-bottom: 2px solid $green-blue-color;
+
+		border-radius: 50%;
+		animation: border-move 5s linear infinite;
+		z-index: -1;
+		transition: border .2s linear;
+	}
+
+	&:hover::after {
+		border-top: 2px solid rgb(233, 229, 7);
+		border-bottom: 2px solid rgb(233, 229, 7);
+	}
+
+	@keyframes border-move {
+		from {
+			transform: translate(-50%, -50%) rotate(0);
+		}
+
+		to {
+			transform: translate(-50%, -50%) rotate(360deg);
+
+		}
+	}
+}
+
 .search {
 
 	display: inline-block;

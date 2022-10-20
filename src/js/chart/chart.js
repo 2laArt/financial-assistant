@@ -18,9 +18,10 @@ export default class Chart {
 		}
 		this.chartPartsData = [];
 	}
+
 	drawDashedLine(coord1, coord2, coord3, color) {
 		this.ctx.beginPath();
-		this.ctx.setLineDash([6, 3]);
+		this.ctx.setLineDash([3, 2]);
 		this.ctx.strokeStyle = color;
 		this.ctx.lineWidth = 0.2;
 		this.ctx.moveTo(coord1.x, coord1.y);
@@ -62,8 +63,10 @@ export default class Chart {
 		this.ctx.stroke();
 	}
 	selectedData(x) {
+		// refactoring !!!
 		try {
-			return this.chartPartsData.find(item => item.x >= x)
+			return this.chartPartsData.find((item) => item.x >= x)
+			// && i < this.chartPartsData.length - 1
 		} catch (e) {
 			console.log(e)
 			return null

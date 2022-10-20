@@ -5,21 +5,36 @@
 #canvasChart {
 	width: 400px;
 	height: 200px;
-	// border: 1px dashed rgb(153, 153, 153);
+}
+
+#canvasPrice {
+	width: 6rem;
+	height: 20rem;
+	border: 1px solid #fff;
+}
+
+#canvasTime {
+	width: 20rem;
+	height: 6rem;
 }
 
 .box {
+	display: inline-block;
 	position: relative;
 }
 
 .info_TEST {
 	position: absolute;
-	// bottom: 0;
 	background: rgba(255, 255, 255, .1);
 	padding: .5rem 1rem;
 	border: 1px solid #fff;
 	line-height: 1.5rem;
 	z-index: 10;
+}
+
+.table_chart {
+	display: contents;
+	border-collapse: collapse;
 }
 
 .main_data {

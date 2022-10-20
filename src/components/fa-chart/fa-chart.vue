@@ -1,6 +1,8 @@
 <template>
   <div class="fa_chart">
-    <h3 class="fa_training_title">Chart</h3>
+    <h3 class="fa_training_title">
+      Chart {{curpair}}
+    </h3>
     <div class="cord_mouse">
     </div>
     <div class="box">
@@ -27,14 +29,44 @@
           {{tradingData.vol}}
         </span>
       </div>
-      <canvas
-        id="canvasChart"
-        @mousemove="moveMouseOnCanvas($event)"
-        @mouseover="chartHover = true"
-        @mouseout="chartHover = false"
-      >
 
-      </canvas>
+      <!-- canvas -->
+      <!-- canvas -->
+      <table class="table_chart">
+        <tr>
+          <td>
+            <canvas
+              id="canvasChart"
+              @mousemove="moveMouseOnCanvas($event)"
+              @mouseover="chartHover = true"
+              @mouseout="chartHover = false"
+            > </canvas>
+          </td>
+          <td>
+            <canvas
+              id="canvasPrice"
+              :style="{
+              'width': `${sizeScales.price[0]}px`,
+              'height': `${sizeScales.price[1]}px`,
+              }"
+            ></canvas>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <canvas
+              id="canvasTime"
+              :style="{
+              'width':`${sizeScales.time[0]}px` ,
+              'height': `${sizeScales.time[1]}px`,
+              }"
+            ></canvas>
+          </td>
+        </tr>
+      </table>
+
+      <!-- canvas -->
+      <!-- canvas -->
     </div>
 
   </div>
@@ -42,7 +74,8 @@
 
 <script>
 import { mapActions, mapGetters } from "vuex";
-import Chart from "../../js/chart";
+import Chart from "../../js/chart/chart";
+import Scale from "../../js/chart/scale";
 // ALCX COMP XCN
 export default {
   name: "fa-training",
@@ -55,9 +88,15 @@ export default {
       chartHover: false,
       chart: null,
       rt: undefined,
-      middlePrice: 1,
-      lowPrice: 0,
-      highPrice: 2,
+      sizeScales: {
+        price: ["60", "200"],
+        time: ["400", "60"],
+      },
+      prices: {
+        high: 2,
+        middle: 1,
+        low: 0,
+      },
       mouse: {
         x: undefined,
         y: undefined,
@@ -66,6 +105,7 @@ export default {
   },
   mounted() {
     this.startingWork();
+    document.body.overflow = "hidden";
   },
   computed: {
     ...mapGetters(["CANDLES"]),
@@ -80,19 +120,19 @@ export default {
   watch: {
     chartHover(val) {
       if (val) {
-        this.canvasAlfa();
+        this.canvasChart();
       }
     },
   },
   methods: {
     ...mapActions(["GET_CANDLES_TO_CURRENCY_PAIR_FROM_API"]),
-    canvasAlfa() {
+    canvasChart() {
       const canvas = document.querySelector("#canvasChart");
       const ctx = canvas.getContext("2d");
       const width = (canvas.width = 400);
       const height = (canvas.height = 200);
       const amount = (width / this.numCandles).toFixed(1);
-      const range = this.middlePrice - this.lowPrice;
+      const range = this.prices.middle - this.prices.low;
 
       this.chart = new Chart(
         ctx,
@@ -100,18 +140,20 @@ export default {
         height,
         amount,
         range,
-        this.middlePrice,
+        this.prices.middle,
         this.candles
       );
 
       this.chart.upDateCanvas(this.mouse.x);
 
-      //middle line
+      // marking lines
+      // this.chart.drawVerticalLine(0, 0);
+      this.chart.drawHorizonLine(0, height);
+      // middle
       this.chart.drawHorizonLine(width / 2, height / 2);
-      //middle line
+      // marking lines
       this.chart.drawChart();
 
-      this.rt = requestAnimationFrame(this.canvasAlfa);
       if (!this.chartHover) {
         this.mouse = { x: undefined, y: undefined };
         cancelAnimationFrame(this.rt);
@@ -127,6 +169,24 @@ export default {
       }
       this.chart.drawHorizonLine(this.mouse.x, this.mouse.y);
       this.chart.drawVerticalLine(this.mouse.x, this.mouse.y);
+
+      this.rt = requestAnimationFrame(this.canvasChart);
+    },
+    canvasTime() {
+      const canvas = document.querySelector("#canvasTime");
+      canvas.width = this.sizeScales.time[0];
+      canvas.height = this.sizeScales.time[1];
+      const ctx = canvas.getContext("2d");
+      const start = this.candles[0][0];
+      const end = this.candles[this.candles.length - 1][0];
+      const scaleTime = new Scale(
+        ctx,
+        true,
+        this.sizeScales.time[0],
+        start,
+        end
+      );
+      scaleTime.computedCoordinatesPosition();
     },
     moveMouseOnCanvas(event) {
       this.mouse.x = event.offsetX;
@@ -141,9 +201,19 @@ export default {
       const sortArr = (cb) => [...this.candles].sort((a, b) => cb(a, b))[0];
       const lowArr = sortArr((a, b) => a[1] - b[1]) ?? [1, 2, 3];
       const highArr = sortArr((a, b) => b[2] - a[2]) ?? [1, 2, 3];
-      this.lowPrice = lowArr[1];
-      this.highPrice = highArr[2];
-      this.middlePrice = (this.lowPrice + this.highPrice) / 2;
+      this.prices.low = lowArr[1];
+      this.prices.high = highArr[2];
+      this.prices.middle = (this.prices.low + this.prices.high) / 2;
+    },
+    getChartInterval() {
+      const start = new Date(this.candles[0][0] * 1000);
+      const end = new Date(this.candles[this.candles.length - 1][0] * 1000);
+      const startHours = start.getHours();
+      const startMitutes = start.getMinutes();
+      const endHours = end.getHours();
+      const endMinutes = end.getMinutes();
+      console.log(`${startHours}: ${startMitutes}`);
+      console.log(`${endHours}: ${endMinutes}`);
     },
     async startingWork() {
       const pair = this.curpair;
@@ -159,8 +229,10 @@ export default {
       this.candles = this.CANDLES.sort((a, b) => a[0] - b[0]);
       this.numCandles = this.candles.length;
       this.getAverageCost();
+      // this.getChartInterval();
 
-      this.canvasAlfa();
+      this.canvasTime();
+      this.canvasChart();
     },
   },
 };

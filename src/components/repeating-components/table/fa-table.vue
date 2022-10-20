@@ -1,13 +1,5 @@
 <template>
   <section class="section_all_currencies">
-    <!-- <div class="search_token">
-      <input
-        type="text"
-        v-model="filter"
-        placeholder="search"
-      >
-      <button @click="clickBtn">&#x1F50E;&#xFE0E;</button>
-    </div> -->
 
     <table class="table_all_currencies">
 
@@ -116,6 +108,11 @@ export default {
       return this.filteredListCurrencies.length <= this.numberOfCurrencies;
     },
   },
+  watch: {
+    FILTER(val) {
+      this.filter = val;
+    },
+  },
   methods: {
     wrapNamePart(str) {
       if (this.wrapWordCur) {
@@ -155,11 +152,6 @@ export default {
     },
     resizeWindow() {
       this.wrapWordCur = window.innerWidth < 550;
-    },
-  },
-  watch: {
-    FILTER(val) {
-      this.filter = val;
     },
   },
   mounted() {

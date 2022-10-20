@@ -1,7 +1,9 @@
 <template>
   <header class="fa_header">
     <div class="header_container">
-      <div class="logo header_item">FA</div>
+      <div class="header_item">
+        <span class="logo">FA</span>
+      </div>
       <div class="search">
         <input
           type="text"
