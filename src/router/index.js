@@ -1,5 +1,5 @@
 import {
-  createRouter, createWebHashHistory
+  createRouter, createWebHistory
 } from 'vue-router'
 
 import FaMain from "../components/fa-main/fa-main-page.vue"
@@ -38,7 +38,7 @@ const routes = [
 ]
 
 const router = createRouter({
-  history: createWebHashHistory('main'),
+  history: createWebHistory('main'),
   mode: 'history',
   hash: false,
   routes

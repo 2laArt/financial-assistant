@@ -45,7 +45,7 @@ export default class Chart {
 		];
 		this.drawDashedLine(...coord, "#ccc");
 	}
-	upDateCanvas() {
+	updateCanvas() {
 		this.ctx.fillStyle = this.color.root;
 		this.ctx.beginPath();
 		this.ctx.fillRect(0, 0, this.width, this.height);
@@ -64,6 +64,7 @@ export default class Chart {
 	}
 	selectedData(x) {
 		// refactoring !!!
+		// console.log(this.chartPartsData)
 		try {
 			return this.chartPartsData.find((item) => item.x >= x)
 			// && i < this.chartPartsData.length - 1
@@ -85,9 +86,11 @@ export default class Chart {
 			y: y,
 			color: color,
 			tradingData: {
-				time: tradingData[0],
+				time: (tradingData[0] * 1000),
 				low: tradingData[1],
 				high: tradingData[2],
+				open: tradingData[3],
+				close: tradingData[4],
 				vol: tradingData[5]
 			}
 		})
@@ -95,7 +98,8 @@ export default class Chart {
 	drawChart() {
 		let curDot = { x: undefined, y: undefined };
 		this.candles.forEach((item, i) => {
-			let priceClose = item[4];
+			let priceCloseIndex = 4;
+			let priceClose = item[priceCloseIndex];
 			let curRange = Math.abs(this.middlePrice - priceClose);
 			let curInd = curRange / this.range;
 			let heigthLine = this.middleOfChart * curInd;

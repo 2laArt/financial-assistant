@@ -16,17 +16,17 @@
         TIME: {{timeBucketStart}} <br>
         Lowest price during the bucket interval:
         <span class="main_data">
-          {{tradingData.low}}
+          {{currentTradingData.low}}
         </span>
 
         <br>
         Highest price during the bucket interval:
         <span class="main_data">
-          {{tradingData.high}}
+          {{currentTradingData.high}}
         </span>
         <br>
         Volume of trading activity during the bucket interval: <span class="main_data">
-          {{tradingData.vol}}
+          {{currentTradingData.vol}}
         </span>
       </div>
 
@@ -81,8 +81,9 @@ export default {
   name: "fa-training",
   data() {
     return {
-      tradingData: {},
       curpair: "BTC-USD",
+      currentTradingData: {},
+      allChartData: [],
       candles: [],
       numCandles: 0,
       chartHover: false,
@@ -110,8 +111,8 @@ export default {
   computed: {
     ...mapGetters(["CANDLES"]),
     timeBucketStart() {
-      if (!this.tradingData.time) return;
-      return new Date(this.tradingData.time * 1000);
+      if (!this.currentTradingData.time) return;
+      return new Date(this.currentTradingData.time);
     },
     posInfo() {
       return this.mouse.y < 100;
@@ -128,6 +129,7 @@ export default {
     ...mapActions(["GET_CANDLES_TO_CURRENCY_PAIR_FROM_API"]),
     canvasChart() {
       const canvas = document.querySelector("#canvasChart");
+      if (!canvas) return;
       const ctx = canvas.getContext("2d");
       const width = (canvas.width = 400);
       const height = (canvas.height = 200);
@@ -144,7 +146,21 @@ export default {
         this.candles
       );
 
-      this.chart.upDateCanvas(this.mouse.x);
+      // get all chart data
+      if (!this.allChartData.length) {
+        this.allChartData = this.chart.chartPartsData;
+      }
+      // remove animation, reset mouse
+      if (!this.chartHover) {
+        this.mouse = { x: undefined, y: undefined };
+        cancelAnimationFrame(this.rt);
+      }
+
+      this.chart.updateCanvas();
+
+      // drawChart
+      this.chart.drawChart();
+      // drawChart
 
       // marking lines
       // this.chart.drawVerticalLine(0, 0);
@@ -152,24 +168,20 @@ export default {
       // middle
       this.chart.drawHorizonLine(width / 2, height / 2);
       // marking lines
-      this.chart.drawChart();
-
-      if (!this.chartHover) {
-        this.mouse = { x: undefined, y: undefined };
-        cancelAnimationFrame(this.rt);
-      }
-
+      // get info, draw circle, cross
       if (this.chartHover && this.mouse.x) {
         const curRadius = 3;
         const data = this.chart.selectedData(this.mouse.x);
+        this.chart.drawHorizonLine(this.mouse.x, this.mouse.y);
+        this.chart.drawVerticalLine(this.mouse.x, this.mouse.y);
         if (data) {
-          this.tradingData = data.tradingData;
+          this.currentTradingData = data.tradingData;
           this.chart.drawCircle(data.x, data.y, curRadius, data.color);
         }
       }
-      this.chart.drawHorizonLine(this.mouse.x, this.mouse.y);
-      this.chart.drawVerticalLine(this.mouse.x, this.mouse.y);
+      // get info, draw circle, cross
 
+      //loop
       this.rt = requestAnimationFrame(this.canvasChart);
     },
     canvasTime() {
@@ -177,16 +189,27 @@ export default {
       canvas.width = this.sizeScales.time[0];
       canvas.height = this.sizeScales.time[1];
       const ctx = canvas.getContext("2d");
-      const start = this.candles[0][0];
-      const end = this.candles[this.candles.length - 1][0];
       const scaleTime = new Scale(
         ctx,
+        this.allChartData,
         true,
-        this.sizeScales.time[0],
-        start,
-        end
+        this.sizeScales.time[0]
       );
-      scaleTime.computedCoordinatesPosition();
+      scaleTime.drawCoordination();
+    },
+    canvasPrice() {
+      const canvas = document.querySelector("#canvasPrice");
+      canvas.width = this.sizeScales.price[0];
+      canvas.height = this.sizeScales.price[1];
+      const ctx = canvas.getContext("2d");
+      const scaleTime = new Scale(
+        ctx,
+        this.allChartData,
+        false,
+        this.sizeScales.time[0]
+      );
+      scaleTime.drawCoordination();
+      // scaleTime.computedCoordinates();
     },
     moveMouseOnCanvas(event) {
       this.mouse.x = event.offsetX;
@@ -206,7 +229,8 @@ export default {
       this.prices.middle = (this.prices.low + this.prices.high) / 2;
     },
     getChartInterval() {
-      const start = new Date(this.candles[0][0] * 1000);
+      // !!! delete
+      const start = new Date(this.candles[0][0]);
       const end = new Date(this.candles[this.candles.length - 1][0] * 1000);
       const startHours = start.getHours();
       const startMitutes = start.getMinutes();
@@ -230,9 +254,9 @@ export default {
       this.numCandles = this.candles.length;
       this.getAverageCost();
       // this.getChartInterval();
-
-      this.canvasTime();
       this.canvasChart();
+      this.canvasTime();
+      this.canvasPrice();
     },
   },
 };

@@ -29,11 +29,17 @@ export default {
   },
   created() {
     this.beginningWork();
+    document.body.style.overflow = "hidden";
   },
   watch: {
     SELECTED_CURRENCY() {
       this.IS_LOADED_PAGE(false);
       this.setPriceToCurrencies();
+    },
+    LOADED_PAGE(val) {
+      if (val) {
+        document.body.style.overflow = "scroll";
+      } else document.body.style.overflow = "hidden";
     },
   },
   computed: {
