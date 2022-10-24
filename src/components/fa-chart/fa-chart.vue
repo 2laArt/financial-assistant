@@ -238,17 +238,6 @@ export default {
       this.prices.high = highArr[2];
       this.prices.middle = (this.prices.low + this.prices.high) / 2;
     },
-    getChartInterval() {
-      // !!! delete
-      const start = new Date(this.candles[0][0]);
-      const end = new Date(this.candles[this.candles.length - 1][0] * 1000);
-      const startHours = start.getHours();
-      const startMitutes = start.getMinutes();
-      const endHours = end.getHours();
-      const endMinutes = end.getMinutes();
-      console.log(`${startHours}: ${startMitutes}`);
-      console.log(`${endHours}: ${endMinutes}`);
-    },
     async startingWork() {
       const pair = this.curpair;
       const dateNow = new Date(Date.now());
@@ -263,7 +252,6 @@ export default {
       this.candles = this.CANDLES.sort((a, b) => a[0] - b[0]);
       this.numCandles = this.candles.length;
       this.getAverageCost();
-      // this.getChartInterval();
       this.canvasChart();
       this.canvasTime();
       this.canvasPrice();
