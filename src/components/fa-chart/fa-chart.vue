@@ -14,9 +14,9 @@
       }"
       >
         TIME: {{timeBucketStart}} <br>
-        Lowest price during the bucket interval:
+        lower price during the bucket interval:
         <span class="main_data">
-          {{currentTradingData.low}}
+          {{currentTradingData.close}}
         </span>
 
         <br>
@@ -81,7 +81,7 @@ export default {
   name: "fa-training",
   data() {
     return {
-      curpair: "BTC-USD",
+      curpair: "COMP-USD",
       currentTradingData: {},
       allChartData: [],
       candles: [],
@@ -189,27 +189,37 @@ export default {
       canvas.width = this.sizeScales.time[0];
       canvas.height = this.sizeScales.time[1];
       const ctx = canvas.getContext("2d");
+      const axis = "x";
+      const numOfSteps = 5;
+      const param = "time";
       const scaleTime = new Scale(
         ctx,
         this.allChartData,
-        true,
-        this.sizeScales.time[0]
+        axis,
+        this.sizeScales.time[0],
+        numOfSteps,
+        param
       );
-      scaleTime.drawCoordination();
+      // scaleTime.newDrawing();
+      scaleTime.drawTime();
     },
     canvasPrice() {
       const canvas = document.querySelector("#canvasPrice");
       canvas.width = this.sizeScales.price[0];
       canvas.height = this.sizeScales.price[1];
       const ctx = canvas.getContext("2d");
+      const axis = "y";
+      const numOfSteps = 7;
+      const param = "close";
       const scaleTime = new Scale(
         ctx,
         this.allChartData,
-        false,
-        this.sizeScales.time[0]
+        axis,
+        this.sizeScales.price[1],
+        numOfSteps,
+        param
       );
-      scaleTime.drawCoordination();
-      // scaleTime.computedCoordinates();
+      scaleTime.newDrawing();
     },
     moveMouseOnCanvas(event) {
       this.mouse.x = event.offsetX;

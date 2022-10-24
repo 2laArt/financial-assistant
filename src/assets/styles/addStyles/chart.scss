@@ -5,14 +5,6 @@
 .table_chart {
 	border-collapse: collapse;
 	border-spacing: 0px;
-
-	// td,
-	// tr {
-	// 	border-collapse: collapse;
-	// 	padding: 0px solid transparent;
-	// 	border-spacing: 0px;
-
-	// }
 }
 
 #canvasChart {
@@ -23,11 +15,9 @@
 #canvasPrice {
 	width: 6rem;
 	height: 20rem;
-	// border: 1px solid #fff;
 }
 
 #canvasTime {
-	// border-top: 1px solid #fff;
 	width: 20rem;
 	line-height: 6rem;
 	height: 6rem;
