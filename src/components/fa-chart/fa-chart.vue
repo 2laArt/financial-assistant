@@ -219,7 +219,7 @@ export default {
         numOfSteps,
         param
       );
-      scaleTime.newDrawing();
+      scaleTime.drawPriceScales();
     },
     moveMouseOnCanvas(event) {
       this.mouse.x = event.offsetX;

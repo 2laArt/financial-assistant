@@ -21,7 +21,8 @@ export default class Scale {
 			this.drawCoordinates(value, position)
 		}
 	}
-	newDrawing() {
+	drawPriceScales() {
+		const pixel = this.pixelOfPrice();
 		for (let i = 1; i < this.numOfSteps; i++) {
 			const coordinate = this.step * i;
 			const nearestElem = [...this.data]
@@ -30,11 +31,16 @@ export default class Scale {
 					Math.abs(coordinate - b[this.axis]))[0];
 
 			const boolean = coordinate > nearestElem[this.axis];
-			const plus = this.percentageOfValue(nearestElem, boolean, coordinate);
-			plus
+
+			const distanceOfDot = Math.abs(coordinate - nearestElem[this.axis]);
+			const priceAddition = pixel * distanceOfDot;
 			const val = nearestElem.tradingData[this.param];
-			const value = this.parameterValue(val);
-			this.drawCoordinates(value, coordinate);
+			let value = this.parameterValue(val);
+			if (boolean) {
+				value = val - priceAddition;
+			} else value = val + priceAddition;
+			this.drawCoordinates(value.toPrecision(4), coordinate);
+
 		}
 	}
 	percentageOfValue(elem, boolean, coordinate) {
@@ -56,9 +62,18 @@ export default class Scale {
 	searchPair(elem, boolean) {
 		const index = this.data.indexOf(elem);
 		const nextIndex = boolean ? index + 1 : index - 1;
-		const first = this.data[index]
-		const second = this.data[nextIndex]
-		return [first, second]
+		const first = this.data[index];
+		const second = this.data[nextIndex];
+		return [first, second];
+	}
+	pixelOfPrice() {
+		const dataSortPrice = [...this.data].sort((a, b) =>
+			a.tradingData[this.param] - b.tradingData[this.param]);
+		const dataSortAxis = [...this.data].sort((a, b) =>
+			a[this.axis] - b[this.axis]);
+		const rangePrice = dataSortPrice[dataSortPrice.length - 1].tradingData[this.param] - dataSortPrice[0].tradingData[this.param];
+		const axisLength = dataSortAxis[dataSortAxis.length - 1][this.axis] - dataSortAxis[0][this.axis];
+		return rangePrice / axisLength;
 	}
 
 	drawCoordinates(value, position) {
@@ -106,9 +121,9 @@ export default class Scale {
 		return data[this.axis]
 	}
 	getPrice(data) {
-		// const str = String(data);
-		// return str.length > 5 ? str.slice(0, 5) : str;
-		return data.toPrecision(4)
+		const str = String(data);
+		return str.length > 5 ? str.slice(0, 5) : str;
+		// return data.toPrecision(4)
 	}
 	getTime(data) {
 		return this.dateString(data)

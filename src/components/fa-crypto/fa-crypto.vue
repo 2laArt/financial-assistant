@@ -18,7 +18,6 @@ export default {
     FaTable,
   },
   data() {
-    console.log("Jhgfd");
     return {
       titleTable: "Crypto",
       headersColum: ["marker", "full name", "price"],
