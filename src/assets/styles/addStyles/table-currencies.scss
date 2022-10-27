@@ -3,36 +3,36 @@
 	position: relative;
 }
 
-.search_token {
-	display: inline-block;
-	margin-top: 1rem;
-	position: relative;
+// .search_token {
+// 	display: inline-block;
+// 	margin-top: 1rem;
+// 	position: relative;
 
-	input {
-		max-width: 10rem;
-		padding: .5rem 2.2rem;
-		background: transparent;
-		border: 1px solid #fff;
-		border-radius: 2rem;
-		color: #fff;
-		text-align: center;
-	}
+// 	input {
+// 		max-width: 10rem;
+// 		padding: .5rem 2.2rem;
+// 		background: transparent;
+// 		border: 1px solid #fff;
+// 		border-radius: 2rem;
+// 		color: #fff;
+// 		text-align: center;
+// 	}
 
-	button {
-		display: inline-block;
-		background: transparent;
-		color: #fff;
-		line-height: 0;
-		border: transparent;
-		position: absolute;
-		right: .5rem;
-		top: 50%;
-		transform: translateY(-50%);
-		cursor: pointer;
-	}
+// 	button {
+// 		display: inline-block;
+// 		background: transparent;
+// 		color: #fff;
+// 		line-height: 0;
+// 		border: transparent;
+// 		position: absolute;
+// 		right: .5rem;
+// 		top: 50%;
+// 		transform: translateY(-50%);
+// 		cursor: pointer;
+// 	}
 
-	z-index: 1;
-}
+// 	z-index: 1;
+// }
 
 .table_all_currencies {
 	width: 100%;
@@ -99,13 +99,11 @@
 }
 
 .show_more_currencies {
-	color: $white-color;
 	font-weight: 300;
 	font-size: 1rem;
 	margin: 1.5rem 0;
 	text-transform: uppercase;
 	border: 1px solid $white-color;
-	background: transparent;
 	border-radius: 9rem;
 	padding: .8rem 1rem;
 	transition: all .2s linear;

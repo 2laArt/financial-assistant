@@ -35,6 +35,14 @@ img {
 	height: auto;
 }
 
+button {
+	font-family: 'Montserrat', sans-serif;
+	display: inline-block;
+	border: transparent;
+	background: transparent;
+	color: $white-color;
+}
+
 .fa_app {
 	width: 100%;
 	min-height: 100vh;

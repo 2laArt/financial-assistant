@@ -2,7 +2,10 @@
   <header class="fa_header">
     <div class="header_container">
       <div class="header_item">
-        <span class="logo">FA</span>
+        <button
+          class="logo"
+          @click="goToFaWelcom"
+        >FA</button>
       </div>
       <div class="search">
         <input
@@ -29,7 +32,7 @@
 <script>
 import { mapGetters, mapMutations } from "vuex";
 export default {
-  name: "fa-top-panel",
+  name: "fa-header",
   data() {
     return {
       filter: "",
@@ -49,6 +52,9 @@ export default {
   },
   methods: {
     ...mapMutations(["CHANGE_SELECTED_CURRENCY", "SET_NEW_FILTER"]),
+    goToFaWelcom() {
+      this.$router.push({ path: "/" });
+    },
   },
   mounted() {
     this.selectedCurrency = this.SELECTED_CURRENCY;

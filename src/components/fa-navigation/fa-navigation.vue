@@ -51,7 +51,7 @@ export default {
     };
   },
   mounted() {
-    this.$route.name = "main";
+    // this.$route.name = "main";
   },
   watch: {
     $route() {

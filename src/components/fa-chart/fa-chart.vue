@@ -46,8 +46,8 @@
             <canvas
               id="canvasPrice"
               :style="{
-              'width': `${sizeScales.price[0]}px`,
-              'height': `${sizeScales.price[1]}px`,
+              'width': `${chartSizes.axisWidth}px`,
+              'height': `${chartSizes.chartHeight}px`,
               }"
             ></canvas>
           </td>
@@ -57,8 +57,8 @@
             <canvas
               id="canvasTime"
               :style="{
-              'width':`${sizeScales.time[0]}px` ,
-              'height': `${sizeScales.time[1]}px`,
+              'width':`${chartSizes.chartWidth}px` ,
+              'height': `${chartSizes.axisWidth}px`,
               }"
             ></canvas>
           </td>
@@ -81,7 +81,7 @@ export default {
   name: "fa-training",
   data() {
     return {
-      curpair: "COMP-USD",
+      curpair: "BTC-USD",
       currentTradingData: {},
       allChartData: [],
       candles: [],
@@ -89,9 +89,10 @@ export default {
       chartHover: false,
       chart: null,
       rt: undefined,
-      sizeScales: {
-        price: ["60", "200"],
-        time: ["400", "60"],
+      chartSizes: {
+        chartWidth: 400,
+        chartHeight: 200,
+        axisWidth: 60,
       },
       prices: {
         high: 2,
@@ -130,12 +131,11 @@ export default {
     canvasChart() {
       const canvas = document.querySelector("#canvasChart");
       if (!canvas) return;
+      const width = (canvas.width = this.chartSizes.chartWidth);
+      const height = (canvas.height = this.chartSizes.chartHeight);
       const ctx = canvas.getContext("2d");
-      const width = (canvas.width = 400);
-      const height = (canvas.height = 200);
       const amount = (width / this.numCandles).toFixed(1);
       const range = this.prices.middle - this.prices.low;
-
       this.chart = new Chart(
         ctx,
         width,
@@ -145,7 +145,6 @@ export default {
         this.prices.middle,
         this.candles
       );
-
       // get all chart data
       if (!this.allChartData.length) {
         this.allChartData = this.chart.chartPartsData;
@@ -180,14 +179,13 @@ export default {
         }
       }
       // get info, draw circle, cross
-
       //loop
       this.rt = requestAnimationFrame(this.canvasChart);
     },
-    canvasTime() {
+    canvasTime(chartWidth, axisWidth) {
       const canvas = document.querySelector("#canvasTime");
-      canvas.width = this.sizeScales.time[0];
-      canvas.height = this.sizeScales.time[1];
+      canvas.width = chartWidth;
+      canvas.height = axisWidth;
       const ctx = canvas.getContext("2d");
       const axis = "x";
       const numOfSteps = 5;
@@ -196,17 +194,16 @@ export default {
         ctx,
         this.allChartData,
         axis,
-        this.sizeScales.time[0],
+        chartWidth,
         numOfSteps,
         param
       );
-      // scaleTime.newDrawing();
       scaleTime.drawTime();
     },
-    canvasPrice() {
+    canvasPrice(chartHeight, axisWidth) {
       const canvas = document.querySelector("#canvasPrice");
-      canvas.width = this.sizeScales.price[0];
-      canvas.height = this.sizeScales.price[1];
+      canvas.width = axisWidth;
+      canvas.height = chartHeight;
       const ctx = canvas.getContext("2d");
       const axis = "y";
       const numOfSteps = 7;
@@ -215,11 +212,18 @@ export default {
         ctx,
         this.allChartData,
         axis,
-        this.sizeScales.price[1],
+        chartHeight,
         numOfSteps,
         param
       );
       scaleTime.drawPriceScales();
+    },
+    startDrawAxes() {
+      const chartWidth = this.chartSizes.chartWidth;
+      const chartHeight = this.chartSizes.chartHeight;
+      const axisWidth = this.chartSizes.axisWidth;
+      this.canvasTime(chartWidth, axisWidth);
+      this.canvasPrice(chartHeight, axisWidth);
     },
     moveMouseOnCanvas(event) {
       this.mouse.x = event.offsetX;
@@ -252,9 +256,8 @@ export default {
       this.candles = this.CANDLES.sort((a, b) => a[0] - b[0]);
       this.numCandles = this.candles.length;
       this.getAverageCost();
-      this.canvasChart();
-      this.canvasTime();
-      this.canvasPrice();
+      this.canvasChart(this.chartSizes.chartWidth, this.chartSizes.chartHeight);
+      this.startDrawAxes();
     },
   },
 };

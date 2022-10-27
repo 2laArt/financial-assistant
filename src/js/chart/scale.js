@@ -22,7 +22,7 @@ export default class Scale {
 		}
 	}
 	drawPriceScales() {
-		const pixel = this.pixelOfPrice();
+		const pixelOfPrice = this.pixelOfPrice();
 		for (let i = 1; i < this.numOfSteps; i++) {
 			const coordinate = this.step * i;
 			const nearestElem = [...this.data]
@@ -30,41 +30,16 @@ export default class Scale {
 					Math.abs(coordinate - a[this.axis]) -
 					Math.abs(coordinate - b[this.axis]))[0];
 
-			const boolean = coordinate > nearestElem[this.axis];
-
+			const isAbove = coordinate > nearestElem[this.axis];
 			const distanceOfDot = Math.abs(coordinate - nearestElem[this.axis]);
-			const priceAddition = pixel * distanceOfDot;
-			const val = nearestElem.tradingData[this.param];
-			let value = this.parameterValue(val);
-			if (boolean) {
-				value = val - priceAddition;
-			} else value = val + priceAddition;
-			this.drawCoordinates(value.toPrecision(4), coordinate);
-
+			const priceAddition = pixelOfPrice * distanceOfDot;
+			const currentValue = Number(nearestElem.tradingData[this.param]);
+			let price;
+			if (isAbove) {
+				price = this.getPrice(currentValue - priceAddition);
+			} else price = this.getPrice(currentValue + priceAddition);
+			this.drawCoordinates(price, coordinate);
 		}
-	}
-	percentageOfValue(elem, boolean, coordinate) {
-		const [first, second] = [...this.searchPair(elem, boolean)]
-		const distanceBetweenElem =
-			Math.abs(first[this.axis] - second[this.axis]);
-
-		const paramRange =
-			Math.abs(first.tradingData[this.param] - second.tradingData[this.param]);
-
-		const distanceToCoordination =
-			Math.abs(first[this.axis] - coordinate);
-
-		const percentages = distanceToCoordination / distanceBetweenElem;
-
-		const plus = paramRange * percentages;
-		return plus;
-	}
-	searchPair(elem, boolean) {
-		const index = this.data.indexOf(elem);
-		const nextIndex = boolean ? index + 1 : index - 1;
-		const first = this.data[index];
-		const second = this.data[nextIndex];
-		return [first, second];
 	}
 	pixelOfPrice() {
 		const dataSortPrice = [...this.data].sort((a, b) =>
@@ -121,9 +96,8 @@ export default class Scale {
 		return data[this.axis]
 	}
 	getPrice(data) {
-		const str = String(data);
-		return str.length > 5 ? str.slice(0, 5) : str;
-		// return data.toPrecision(4)
+		if (data > 0) return data.toFixed(2)
+		return data.toPrecision(3)
 	}
 	getTime(data) {
 		return this.dateString(data)
