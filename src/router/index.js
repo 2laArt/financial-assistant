@@ -1,8 +1,8 @@
 import {
-  createRouter, createWebHashHistory
+  createRouter, createWebHistory
 } from 'vue-router'
 
-import FaWelcom from "../components/fa/fa-welcom.vue"
+import FaWelcome from "../components/fa/fa-welcome.vue"
 import FaMain from "../components/fa-main/fa-main-page.vue"
 import FaCrypto from "../components/fa-crypto/fa-crypto.vue"
 import FaFiat from "../components/fa-fiat-currencies/fa-fiat.vue"
@@ -12,8 +12,8 @@ import FaChart from "../components/fa-chart/fa-chart.vue"
 const routes = [
   {
     path: '/',
-    name: 'welcom',
-    component: FaWelcom
+    name: 'welcome',
+    component: FaWelcome
   },
   {
     path: '/main',
@@ -44,9 +44,9 @@ const routes = [
 ]
 
 const router = createRouter({
-  history: createWebHashHistory(),
+  history: createWebHistory('fa'),
   mode: 'history',
-  hash: false,
+  // hash: false,
   routes
 })
 

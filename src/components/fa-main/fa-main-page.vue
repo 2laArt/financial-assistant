@@ -3,9 +3,9 @@
     <h3 class="fa_main_sub_title">
       Welcome
     </h3>
-    <h1 class="fa_main_title">
+    <h2 class="fa_main_title">
       This is Your Financial Assistant
-    </h1>
+    </h2>
     <section class="fa_main_section">
       <h4 class="fa_main_section_title">
         NFT Marketplace
