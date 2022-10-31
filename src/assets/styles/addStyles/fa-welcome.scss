@@ -12,6 +12,11 @@
 	font-size: 4rem;
 	text-align: center;
 	margin: 3rem 0;
+
+	@include breakpoint($md) {
+		font-size: 2.7rem;
+		margin: 1rem 0;
+	}
 }
 
 .fa_welcom_container {
@@ -21,12 +26,8 @@
 
 	@include breakpoint($sm) {
 		flex-direction: column;
-
-		// .title_welcome_main_info {
-		// 	position: absolute;
-		// 	width: 100%;
-		// 	min-height: 100%;
-		// }
+		text-align: center;
+		margin: 1rem 0;
 	}
 }
 
@@ -37,11 +38,25 @@
 .welcome_text {
 	width: 100%;
 	max-width: 50rem;
+
+	@include breakpoint($sm) {
+		max-width: 100%;
+	}
 }
 
 .title_welcome {
 	font-size: 2.2rem;
 	margin: 2rem 0;
+
+	@include breakpoint($md) {
+		font-size: 1.8rem;
+		margin: 1rem 0;
+	}
+
+	@include breakpoint($md-sm) {
+		font-size: 1.6rem;
+		margin: .8rem 0;
+	}
 }
 
 .title_welcome_main_info {
@@ -50,12 +65,25 @@
 	mark {
 		padding: 0 .2rem;
 	}
+
+	@include breakpoint($md) {
+		font-size: 2rem;
+	}
+
+	@include breakpoint($md-sm) {
+		font-size: 1.8rem;
+	}
 }
 
 .feature_list {
 	// list-style-position: inside;
 	font-size: 1.6rem;
 	margin: 3rem 1.6rem 0;
+
+	@include breakpoint($md) {
+		font-size: 1.2rem;
+		margin: 1.5rem 1.6rem 0;
+	}
 }
 
 .feature_item {
@@ -66,15 +94,24 @@
 	&:hover {
 		color: lighten($gray-color, 20%);
 	}
+
+	@include breakpoint($md-sm) {
+		margin: .5rem;
+	}
 }
 
 .welcom_image {
 	display: flex;
 	align-items: center;
+	margin: 0 auto;
 
 	img {
 		display: block;
 		width: 100%;
 		height: auto;
+	}
+
+	@include breakpoint($sm) {
+		max-width: 70%;
 	}
 }

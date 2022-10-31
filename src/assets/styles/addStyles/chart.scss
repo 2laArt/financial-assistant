@@ -7,30 +7,15 @@
 	border-spacing: 0px;
 }
 
-#canvasChart {
-	width: 400px;
-	height: 200px;
-}
-
-#canvasPrice {
-	width: 6rem;
-	height: 20rem;
-}
-
-#canvasTime {
-	width: 20rem;
-	line-height: 6rem;
-	height: 6rem;
-}
-
-.box {
+.chart_container {
 	display: inline-block;
 	position: relative;
 }
 
-.info_TEST {
+.info_cur_dot {
 	position: absolute;
-	background: rgba(255, 255, 255, .1);
+	font-size: 1.1rem;
+	background: rgba(0, 0, 0, .6);
 	padding: .5rem 1rem;
 	border: 1px solid #fff;
 	line-height: 1.5rem;

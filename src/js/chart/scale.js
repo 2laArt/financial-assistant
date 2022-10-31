@@ -8,14 +8,15 @@ export default class Scale {
 		this.length = length;
 		this.numOfSteps = numOfSteps;
 		this.param = param;
+		this.step = this.length / this.numOfSteps;
 		this.color = {
 			white: "#fff",
 		};
-		this.step = this.length / this.numOfSteps;
 	}
 	drawTime() {
 		for (let i = 1; i < this.numOfSteps; i++) {
 			const currentData = this.data.find(item => item[this.axis] >= this.step * i)
+			// debugger;
 			const value = this.parameterValue(currentData.tradingData[this.param]);
 			const position = this.positionRelativeToDirection(currentData)
 			this.drawCoordinates(value, position)
@@ -59,12 +60,12 @@ export default class Scale {
 
 		if (this.axis === "x") {
 			this.ctx.textAlign = "center";
-			this.ctx.textBaseline = "bottom"
-			this.ctx.fillText(value, position, 12);
+			this.ctx.textBaseline = "hanging"
+			this.ctx.fillText(value, position, 2);
 		} else {
 			this.ctx.textAlign = "left";
 			this.ctx.textBaseline = "middle"
-			this.ctx.fillText(value, 0, position);
+			this.ctx.fillText(value, 2, position);
 		}
 
 	}
