@@ -1,6 +1,7 @@
 <template>
   <div class="fa_training">
     <h3 class="fa_training_title">Training</h3>
+    <h6 style="font-size:2.5rem;"><mark>temporarily not working</mark></h6>
     <canvas id="canvas">
     </canvas>
   </div>
@@ -25,7 +26,7 @@ export default {
     };
   },
   mounted() {
-    this.startingWork();
+    // this.startingWork();
   },
   computed: {
     ...mapGetters(["CANDLES"]),

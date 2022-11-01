@@ -1,10 +1,12 @@
 // 
 // 
 export default {
-	async GET_CANDLES_TO_CURRENCY_PAIR_FROM_API({ commit }, { pair, dateStart, dateEnd }) {
+	async GET_CANDLES_TO_CURRENCY_PAIR_FROM_API({ commit },
+		{ pair, granules, dateStart, dateEnd }
+	) {
 		try {
 			const request = await fetch(
-				`https://api.exchange.coinbase.com/products/${pair}/candles?granularity=60&start=${dateStart}&end=${dateEnd}`
+				`https://api.exchange.coinbase.com/products/${pair}/candles?granularity=${granules}&start=${dateStart}&end=${dateEnd}`
 			);
 			const dataCandles = await request.json()
 			// console.log(dataCandles)

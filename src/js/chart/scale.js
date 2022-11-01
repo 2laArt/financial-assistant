@@ -97,8 +97,8 @@ export default class Scale {
 		return data[this.axis]
 	}
 	getPrice(data) {
-		if (data > 0) return data.toFixed(2)
-		return data.toPrecision(3)
+		if (data > 1) return data.toFixed(2)
+		return data
 	}
 	getTime(data) {
 		return this.dateString(data)

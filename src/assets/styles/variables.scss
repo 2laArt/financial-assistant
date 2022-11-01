@@ -17,10 +17,11 @@ $section-shadow: 0 0 .3rem .5rem rgba(#000, .2);
 $img-shadow: 0 1 .5rem .3rem rgba(#000, .2);
 // shadow
 // gradient
-$green-gray-gradient: radial-gradient(circle farthest-corner at 1rem 0rem, $green-blue-color .5rem, $root-color 4rem);
+$green-gray-gradient: radial-gradient(circle farthest-corner at 2rem 5rem, rgba($green-blue-color, .7) 1rem, rgba($root-color, .7) 7rem);
 // gradient
 
 // z-index
+$z-1: 1;
 $z-chart: 5;
 $z-nav: 10;
 $z-top-panel: 20;

@@ -1,7 +1,21 @@
 <template>
   <div class="fa_chart">
+    <select
+      name="crypto"
+      id="selectCrypto"
+      onfocus='this.size=10;'
+      onblur='this.size=1;'
+      onchange='this.size=1; this.blur();'
+      v-model="curCoin"
+    >
+      <option
+        v-for="coin in CRYPTO"
+        :key="coin"
+        :value="coin.id"
+      >{{coin.id}}</option>
+    </select>
     <h3 class="fa_training_title">
-      Chart {{curpair}}
+      Chart {{curCoin}}-USD
     </h3>
     <div class="chart_container">
       <div
@@ -71,20 +85,16 @@ export default {
   name: "fa-training",
   data() {
     return {
-      curpair: "BTC-USD",
+      curCoin: "BTC",
       currentTradingData: {},
-      allChartData: [],
       candles: [],
       numCandles: 0,
       chartHover: false,
       chartCanvas: null,
       animationLoop: undefined,
-      chartSizes: {
-        chartWidth: 400,
-        chartHeight: 300,
-        axisWidth: 50,
-      },
-      windowSize: "sm",
+      chartSizes: {},
+      windowSize: "",
+      isResizeWindow: false,
       allChartSizes: {
         sm: { chartWidth: 250, chartHeight: 300, axisWidth: 50 },
         md: { chartWidth: 400, chartHeight: 300, axisWidth: 50 },
@@ -103,19 +113,29 @@ export default {
   },
   mounted() {
     this.startingWork();
-    this.chartSizes = this.allChartSizes["sm"];
     this.changeChartSizes();
     window.addEventListener("resize", this.changeChartSizes);
   },
-  unmounted() {},
+  unmounted() {
+    window.removeEventListener("resize", this.changeChartSizes);
+  },
   computed: {
-    ...mapGetters(["CANDLES"]),
+    ...mapGetters(["CANDLES", "CRYPTO"]),
     timeBucketStart() {
       if (!this.currentTradingData.time) return;
       return new Date(this.currentTradingData.time);
     },
     positionInfo() {
       return this.mouse.y < this.chartSizes.chartHeight / 2;
+    },
+    candlesSmall() {
+      if (this.windowSize === "sm" && this.candles.length > 61) {
+        return this.candles.slice(this.candles.length - 60);
+      } else if (this.windowSize === "md" && this.candles.length > 101) {
+        return this.candles.slice(this.candles.length - 100);
+      } else {
+        return this.candles;
+      }
     },
   },
   watch: {
@@ -125,9 +145,13 @@ export default {
       }
     },
     windowSize(val) {
+      // if (this.candles.length === 0) return;
+      this.isResizeWindow = true;
       this.chartSizes = this.allChartSizes[val];
       this.canvasChart();
-      this.startDrawAxes();
+    },
+    curCoin() {
+      this.startingWork();
     },
   },
   methods: {
@@ -140,7 +164,8 @@ export default {
       canvas.style.width = width + "px";
       canvas.style.height = height + "px";
       const ctx = canvas.getContext("2d");
-      const amount = (width / this.numCandles).toFixed(1);
+      const data = this.candlesSmall ?? [];
+      const amount = (width / data.length).toFixed(1);
       const range = this.prices.middle - this.prices.low;
       this.chartCanvas = new Chart(
         ctx,
@@ -149,13 +174,8 @@ export default {
         amount,
         range,
         this.prices.middle,
-        this.candles
+        data
       );
-      // get all chart data
-      if (!this.allChartData.length) {
-        this.allChartData = this.chartCanvas.chartPartsData;
-      }
-
       this.chartCanvas.updateCanvas();
 
       // drawChart
@@ -181,6 +201,14 @@ export default {
       }
       // get info, draw circle, cross
 
+      // get all chart data
+      if (this.chartCanvas.chartPartsData.length !== 0 && this.isResizeWindow) {
+        const allData = this.chartCanvas.chartPartsData;
+        this.canvasTime(allData);
+        this.canvasPrice(allData);
+        this.isResizeWindow = false;
+      }
+
       // remove animation, reset mouse
       if (!this.chartHover) {
         this.mouse = { x: undefined, y: undefined };
@@ -192,56 +220,33 @@ export default {
       this.animationLoop = requestAnimationFrame(this.canvasChart);
       // console.log("loop");
     },
-    canvasTime(chartWidth, axisWidth) {
+    canvasTime(allData) {
       const canvas = document.querySelector("#canvasTime");
-      canvas.width = chartWidth;
-      canvas.height = axisWidth;
-      canvas.style.width = chartWidth + "px";
-      canvas.style.height = axisWidth + "px";
+      const width = (canvas.width = this.chartSizes.chartWidth);
+      const height = (canvas.height = this.chartSizes.axisWidth);
+      canvas.style.width = width + "px";
+      canvas.style.height = height + "px";
       const ctx = canvas.getContext("2d");
+      const data = allData;
       const axis = "x";
       const numOfSteps = 5;
       const param = "time";
-      const scaleTime = new Scale(
-        ctx,
-        this.allChartData,
-        axis,
-        chartWidth,
-        numOfSteps,
-        param
-      );
+      const scaleTime = new Scale(ctx, data, axis, width, numOfSteps, param);
       scaleTime.drawTime();
     },
-    canvasPrice(chartHeight, axisWidth) {
+    canvasPrice(allData) {
       const canvas = document.querySelector("#canvasPrice");
-      canvas.width = axisWidth;
-      canvas.height = chartHeight;
-      canvas.style.width = axisWidth + "px";
-      canvas.style.height = chartHeight + "px";
+      const width = (canvas.width = this.chartSizes.axisWidth);
+      const height = (canvas.height = this.chartSizes.chartHeight);
+      canvas.style.width = width + "px";
+      canvas.style.height = height + "px";
       const ctx = canvas.getContext("2d");
+      const data = allData;
       const axis = "y";
       const numOfSteps = 7;
       const param = "close";
-      const scaleTime = new Scale(
-        ctx,
-        this.allChartData,
-        axis,
-        chartHeight,
-        numOfSteps,
-        param
-      );
+      const scaleTime = new Scale(ctx, data, axis, height, numOfSteps, param);
       scaleTime.drawPriceScales();
-    },
-    startDrawAxes() {
-      if (this.allChartData.length === 0) return;
-      const chartWidth = this.chartSizes.chartWidth;
-      const chartHeight = this.chartSizes.chartHeight;
-      const axisWidth = this.chartSizes.axisWidth;
-      this.canvasTime(chartWidth, axisWidth);
-      this.canvasPrice(chartHeight, axisWidth);
-    },
-    getCurrentChartSizes() {
-      return this.chartSizes[this.windowSize];
     },
     changeChartSizes() {
       const currentWindowSize = window.innerWidth;
@@ -271,21 +276,22 @@ export default {
       this.prices.middle = (this.prices.low + this.prices.high) / 2;
     },
     async startingWork() {
-      const pair = this.curpair;
+      this.isResizeWindow = true;
+      const pair = `${this.curCoin}-USD`;
+      const granules = 900; //60, 300, 900, 3600, 21600, 86400
       const dateNow = new Date(Date.now());
-      const datePast = new Date(Date.now() - 36e5 * 5);
+      const datePast = new Date(Date.now() - 36e5 * 30);
       const dateStart = this.createDateString(datePast);
       const dateEnd = this.createDateString(dateNow);
       await this.GET_CANDLES_TO_CURRENCY_PAIR_FROM_API({
         pair,
+        granules,
         dateStart,
         dateEnd,
       });
       this.candles = this.CANDLES.sort((a, b) => a[0] - b[0]);
-      this.numCandles = this.candles.length;
       this.getAverageCost();
       this.canvasChart();
-      this.startDrawAxes();
     },
   },
 };

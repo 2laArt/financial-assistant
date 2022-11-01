@@ -10,7 +10,7 @@
           We are glad to welcome you on this site.
         </h5>
         <h3 class="title_welcome_main_info">
-          Financial Assistant is <mark>not a commercial</mark> project that provides free access to <mark>information</mark> and <mark>analytics</mark>.
+          Financial Assistant is <mark>not a commercial</mark> project that provides free access to <mark>information</mark> and analytics.
         </h3>
         <ul class="feature_list">
           <li
