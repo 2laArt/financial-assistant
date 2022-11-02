@@ -5,6 +5,7 @@ $white-color: #FFFFFF;
 $gray-color: #80828E;
 $table-color: lighten($gray-color, 30%);
 $green-blue-color: #02a595;
+$yellow-color: #FFFF00;
 // color
 // sizes
 $nav-width: 3.5rem;
@@ -15,6 +16,7 @@ $top-panel-height: 4rem;
 // shadow
 $section-shadow: 0 0 .3rem .5rem rgba(#000, .2);
 $img-shadow: 0 1 .5rem .3rem rgba(#000, .2);
+// $shadow-neon: 0 0 2rem 1.5rem $green-blue-color;
 // shadow
 // gradient
 $green-gray-gradient: radial-gradient(circle farthest-corner at 2rem 5rem, rgba($green-blue-color, .7) 1rem, rgba($root-color, .7) 7rem);

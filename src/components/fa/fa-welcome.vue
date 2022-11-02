@@ -30,7 +30,15 @@
         >
       </div>
     </div>
+    <button
+      class="btn_welcome"
+      @click="goToMain"
+    >
+      Start work
+    </button>
+    <!-- fa_welcome -->
   </div>
+  <!-- fa_welcome -->
 </template>
 <script>
 export default {
@@ -49,6 +57,11 @@ export default {
   computed: {
     selectItem() {
       return `../../assets/images/welcome/${this.selectedImg}.png`;
+    },
+  },
+  methods: {
+    goToMain() {
+      this.$router.push("/main");
     },
   },
 };

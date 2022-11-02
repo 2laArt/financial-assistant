@@ -87,10 +87,9 @@ export default {
     return {
       curCoin: "BTC",
       currentTradingData: {},
-      candles: [],
+      chartData: [],
       numCandles: 0,
       chartHover: false,
-      chartCanvas: null,
       animationLoop: undefined,
       chartSizes: {},
       windowSize: "",
@@ -129,12 +128,12 @@ export default {
       return this.mouse.y < this.chartSizes.chartHeight / 2;
     },
     candlesSmall() {
-      if (this.windowSize === "sm" && this.candles.length > 61) {
-        return this.candles.slice(this.candles.length - 60);
-      } else if (this.windowSize === "md" && this.candles.length > 101) {
-        return this.candles.slice(this.candles.length - 100);
+      if (this.windowSize === "sm" && this.chartData.length > 61) {
+        return this.chartData.slice(this.chartData.length - 60);
+      } else if (this.windowSize === "md" && this.chartData.length > 101) {
+        return this.chartData.slice(this.chartData.length - 100);
       } else {
-        return this.candles;
+        return this.chartData;
       }
     },
   },
@@ -145,7 +144,6 @@ export default {
       }
     },
     windowSize(val) {
-      // if (this.candles.length === 0) return;
       this.isResizeWindow = true;
       this.chartSizes = this.allChartSizes[val];
       this.canvasChart();
@@ -167,7 +165,7 @@ export default {
       const data = this.candlesSmall ?? [];
       const amount = (width / data.length).toFixed(1);
       const range = this.prices.middle - this.prices.low;
-      this.chartCanvas = new Chart(
+      const chartCanvas = new Chart(
         ctx,
         width,
         height,
@@ -176,34 +174,35 @@ export default {
         this.prices.middle,
         data
       );
-      this.chartCanvas.updateCanvas();
+
+      chartCanvas.updateCanvas();
 
       // drawChart
-      this.chartCanvas.drawChart();
+      chartCanvas.drawChart();
       // drawChart
 
       // marking lines
-      // this.chartCanvas.drawVerticalLine(0, 0);
-      this.chartCanvas.drawHorizonLine(0, height);
+      // chartCanvas.drawVerticalLine(0, 0);
+      // chartCanvas.drawHorizonLine(0, height);
       // middle
-      this.chartCanvas.drawHorizonLine(width / 2, height / 2);
+      chartCanvas.drawHorizonLine(width / 2, height / 2);
       // marking lines
       // get info, draw circle, cross
       if (this.chartHover && this.mouse.x) {
         const curRadius = 3;
-        const data = this.chartCanvas.selectedData(this.mouse.x);
-        this.chartCanvas.drawHorizonLine(this.mouse.x, this.mouse.y);
-        this.chartCanvas.drawVerticalLine(this.mouse.x, this.mouse.y);
+        const data = chartCanvas.selectedData(this.mouse.x);
+        chartCanvas.drawHorizonLine(this.mouse.x, this.mouse.y);
+        chartCanvas.drawVerticalLine(this.mouse.x, this.mouse.y);
         if (data) {
           this.currentTradingData = data.tradingData;
-          this.chartCanvas.drawCircle(data.x, data.y, curRadius, data.color);
+          chartCanvas.drawCircle(data.x, data.y, curRadius, data.color);
         }
       }
       // get info, draw circle, cross
 
       // get all chart data
-      if (this.chartCanvas.chartPartsData.length !== 0 && this.isResizeWindow) {
-        const allData = this.chartCanvas.chartPartsData;
+      if (chartCanvas.chartPartsData.length !== 0 && this.isResizeWindow) {
+        const allData = chartCanvas.chartPartsData;
         this.canvasTime(allData);
         this.canvasPrice(allData);
         this.isResizeWindow = false;
@@ -268,7 +267,7 @@ export default {
       }-${date.getDate()}T${date.getHours()}:${date.getMinutes()}:00`;
     },
     getAverageCost() {
-      const sortArr = (cb) => [...this.candles].sort((a, b) => cb(a, b))[0];
+      const sortArr = (cb) => [...this.chartData].sort((a, b) => cb(a, b))[0];
       const lowArr = sortArr((a, b) => a[1] - b[1]) ?? [1, 2, 3];
       const highArr = sortArr((a, b) => b[2] - a[2]) ?? [1, 2, 3];
       this.prices.low = lowArr[1];
@@ -280,7 +279,7 @@ export default {
       const pair = `${this.curCoin}-USD`;
       const granules = 900; //60, 300, 900, 3600, 21600, 86400
       const dateNow = new Date(Date.now());
-      const datePast = new Date(Date.now() - 36e5 * 30);
+      const datePast = new Date(Date.now() - 36e5 * 27);
       const dateStart = this.createDateString(datePast);
       const dateEnd = this.createDateString(dateNow);
       await this.GET_CANDLES_TO_CURRENCY_PAIR_FROM_API({
@@ -289,7 +288,7 @@ export default {
         dateStart,
         dateEnd,
       });
-      this.candles = this.CANDLES.sort((a, b) => a[0] - b[0]);
+      this.chartData = this.CANDLES.sort((a, b) => a[0] - b[0]);
       this.getAverageCost();
       this.canvasChart();
     },
