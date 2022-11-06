@@ -9,6 +9,7 @@ export default createStore({
     priceAllItems: {},
     currencies: [],
     crypto: [],
+    chart: [],
     candles: [],
     selectedCurrency: "USD",
     filter: "",

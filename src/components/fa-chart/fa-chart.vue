@@ -94,6 +94,7 @@ export default {
       chartSizes: {},
       windowSize: "",
       isResizeWindow: false,
+      ratio: window.devicePixelRatio,
       allChartSizes: {
         sm: { chartWidth: 250, chartHeight: 300, axisWidth: 50 },
         md: { chartWidth: 400, chartHeight: 300, axisWidth: 50 },
@@ -119,7 +120,7 @@ export default {
     window.removeEventListener("resize", this.changeChartSizes);
   },
   computed: {
-    ...mapGetters(["CANDLES", "CRYPTO"]),
+    ...mapGetters(["CHART", "CRYPTO"]),
     timeBucketStart() {
       if (!this.currentTradingData.time) return;
       return new Date(this.currentTradingData.time);
@@ -153,24 +154,25 @@ export default {
     },
   },
   methods: {
-    ...mapActions(["GET_CANDLES_TO_CURRENCY_PAIR_FROM_API"]),
+    ...mapActions(["GET_CHART_TO_CURRENCY_PAIR_FROM_API"]),
     canvasChart() {
       const canvas = document.querySelector("#canvasChart");
       if (!canvas) return;
-      const width = (canvas.width = this.chartSizes.chartWidth);
-      const height = (canvas.height = this.chartSizes.chartHeight);
-      canvas.style.width = width + "px";
-      canvas.style.height = height + "px";
       const ctx = canvas.getContext("2d");
+      canvas.style.width = this.chartSizes.chartWidth + "px";
+      canvas.style.height = this.chartSizes.chartHeight + "px";
+      const width = (canvas.width = this.chartSizes.chartWidth * this.ratio);
+      const height = (canvas.height = this.chartSizes.chartHeight * this.ratio);
+      ctx.scale(this.ratio, this.ratio);
       const data = this.candlesSmall ?? [];
-      const amount = (width / data.length).toFixed(1);
-      const range = this.prices.middle - this.prices.low;
+      const amountDot = (width / data.length).toFixed(1);
+      const priceRange = this.prices.middle - this.prices.low;
       const chartCanvas = new Chart(
         ctx,
         width,
         height,
-        amount,
-        range,
+        amountDot,
+        priceRange,
         this.prices.middle,
         data
       );
@@ -221,11 +223,13 @@ export default {
     },
     canvasTime(allData) {
       const canvas = document.querySelector("#canvasTime");
-      const width = (canvas.width = this.chartSizes.chartWidth);
-      const height = (canvas.height = this.chartSizes.axisWidth);
-      canvas.style.width = width + "px";
-      canvas.style.height = height + "px";
+      const width = (canvas.width = this.chartSizes.chartWidth * this.ratio);
+      const height = (canvas.height = this.chartSizes.axisWidth * this.ratio);
+      canvas.style.width = this.chartSizes.chartWidth + "px";
+      canvas.style.height = this.chartSizes.axisWidth + "px";
       const ctx = canvas.getContext("2d");
+      ctx.scale(this.ratio, this.ratio);
+      height;
       const data = allData;
       const axis = "x";
       const numOfSteps = 5;
@@ -235,11 +239,13 @@ export default {
     },
     canvasPrice(allData) {
       const canvas = document.querySelector("#canvasPrice");
-      const width = (canvas.width = this.chartSizes.axisWidth);
-      const height = (canvas.height = this.chartSizes.chartHeight);
-      canvas.style.width = width + "px";
-      canvas.style.height = height + "px";
+      const width = (canvas.width = this.chartSizes.axisWidth * this.ratio);
+      const height = (canvas.height = this.chartSizes.chartHeight * this.ratio);
+      canvas.style.width = this.chartSizes.axisWidth + "px";
+      canvas.style.height = this.chartSizes.chartHeight + "px";
       const ctx = canvas.getContext("2d");
+      ctx.scale(this.ratio, this.ratio);
+      width;
       const data = allData;
       const axis = "y";
       const numOfSteps = 7;
@@ -282,13 +288,13 @@ export default {
       const datePast = new Date(Date.now() - 36e5 * 27);
       const dateStart = this.createDateString(datePast);
       const dateEnd = this.createDateString(dateNow);
-      await this.GET_CANDLES_TO_CURRENCY_PAIR_FROM_API({
+      await this.GET_CHART_TO_CURRENCY_PAIR_FROM_API({
         pair,
         granules,
         dateStart,
         dateEnd,
       });
-      this.chartData = this.CANDLES.sort((a, b) => a[0] - b[0]);
+      this.chartData = this.CHART.sort((a, b) => a[0] - b[0]);
       this.getAverageCost();
       this.canvasChart();
     },

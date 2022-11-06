@@ -9,6 +9,9 @@ export default {
 	PRICE_ALL_ITEM(state) {
 		return state.priceAllItems
 	},
+	CHART(state) {
+		return state.chart
+	},
 	CANDLES(state) {
 		return state.candles
 	},

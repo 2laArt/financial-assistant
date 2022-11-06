@@ -2,13 +2,13 @@
 
 
 export default class Chart {
-	constructor(ctx, width, height, amount, range, middlePrice, candles) {
+	constructor(ctx, width, height, amountDot, priceRange, middlePrice, data) {
 		this.ctx = ctx;
 		this.width = width;
 		this.height = height;
-		this.amount = amount;
-		this.candles = candles;
-		this.range = range;
+		this.amountDot = amountDot;
+		this.data = data;
+		this.priceRange = priceRange;
 		this.middleOfChart = this.height / 2;
 		this.middlePrice = middlePrice;
 		this.color = {
@@ -95,20 +95,20 @@ export default class Chart {
 	}
 	drawChart() {
 		let curDot = { x: undefined, y: undefined };
-		this.candles.forEach((item, i) => {
+		this.data.forEach((item, i) => {
 			const priceCloseIndex = 4;
 			let priceClose = item[priceCloseIndex];
 			let curRange = Math.abs(this.middlePrice - priceClose);
-			let curInd = curRange / this.range;
+			let curInd = curRange / this.priceRange;
 			let heigthLine = this.middleOfChart * curInd;
 			let up = this.middlePrice < priceClose;
-			let x = i * this.amount;
+			let x = i * this.amountDot;
 			let y = up ? this.middleOfChart - heigthLine : this.middleOfChart + heigthLine;
 			let color = y < this.middleOfChart ? this.color.green : this.color.red;
 			if (
 				curDot.y > this.middleOfChart && y < this.middleOfChart
 			) {
-				let x1 = (i * this.amount) - (this.amount / 2);
+				let x1 = (i * this.amountDot) - (this.amountDot / 2);
 				let y1 = this.middleOfChart;
 				this.drawChartLine(curDot, x1, y1, this.color.red);
 				curDot.x = x1;
@@ -117,7 +117,7 @@ export default class Chart {
 			} else if (
 				curDot.y <= this.middleOfChart && y >= this.middleOfChart
 			) {
-				let x1 = (i * this.amount) - (this.amount / 2);
+				let x1 = (i * this.amountDot) - (this.amountDot / 2);
 				let y1 = this.middleOfChart;
 				this.drawChartLine(curDot, x1, y1, this.color.green);
 				curDot.x = x1;
