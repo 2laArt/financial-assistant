@@ -55,7 +55,7 @@ export default class Scale {
 	drawCoordinates(value, position) {
 		// this.drawLine(position);
 		this.ctx.beginPath();
-		this.ctx.font = "10px serif";
+		this.ctx.font = `${10}px serif`;
 		this.ctx.fillStyle = this.color.white;
 
 		if (this.axis === "x") {

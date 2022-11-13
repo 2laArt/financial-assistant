@@ -3,6 +3,6 @@ export default {
 		return state.chart = data
 	},
 	SET_CANDLES_TO_STATE(state, data) {
-		return state.chart = data
+		return state.candles = data
 	},
 }

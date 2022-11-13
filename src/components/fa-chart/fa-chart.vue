@@ -80,7 +80,6 @@
 import { mapActions, mapGetters } from "vuex";
 import Chart from "../../js/chart/chart";
 import Scale from "../../js/chart/scale";
-// ALCX COMP XCN
 export default {
   name: "fa-training",
   data() {
@@ -94,7 +93,6 @@ export default {
       chartSizes: {},
       windowSize: "",
       isResizeWindow: false,
-      ratio: window.devicePixelRatio,
       allChartSizes: {
         sm: { chartWidth: 250, chartHeight: 300, axisWidth: 50 },
         md: { chartWidth: 400, chartHeight: 300, axisWidth: 50 },
@@ -157,16 +155,20 @@ export default {
     ...mapActions(["GET_CHART_TO_CURRENCY_PAIR_FROM_API"]),
     canvasChart() {
       const canvas = document.querySelector("#canvasChart");
+      const ratio = window.devicePixelRatio;
       if (!canvas) return;
-      const ctx = canvas.getContext("2d");
+
       canvas.style.width = this.chartSizes.chartWidth + "px";
       canvas.style.height = this.chartSizes.chartHeight + "px";
-      const width = (canvas.width = this.chartSizes.chartWidth * this.ratio);
-      const height = (canvas.height = this.chartSizes.chartHeight * this.ratio);
-      ctx.scale(this.ratio, this.ratio);
+      // vars
+      const ctx = canvas.getContext("2d");
+      const width = (canvas.width = this.chartSizes.chartWidth * ratio);
+      const height = (canvas.height = this.chartSizes.chartHeight * ratio);
       const data = this.candlesSmall ?? [];
       const amountDot = (width / data.length).toFixed(1);
       const priceRange = this.prices.middle - this.prices.low;
+      // vars
+      // create chart
       const chartCanvas = new Chart(
         ctx,
         width,
@@ -176,7 +178,8 @@ export default {
         this.prices.middle,
         data
       );
-
+      ctx.scale(ratio, ratio);
+      // clear
       chartCanvas.updateCanvas();
 
       // drawChart
@@ -205,8 +208,8 @@ export default {
       // get all chart data
       if (chartCanvas.chartPartsData.length !== 0 && this.isResizeWindow) {
         const allData = chartCanvas.chartPartsData;
-        this.canvasTime(allData);
-        this.canvasPrice(allData);
+        this.canvasTime(allData, ratio);
+        this.canvasPrice(allData, ratio);
         this.isResizeWindow = false;
       }
 
@@ -221,35 +224,42 @@ export default {
       this.animationLoop = requestAnimationFrame(this.canvasChart);
       // console.log("loop");
     },
-    canvasTime(allData) {
+    canvasTime(allData, ratio) {
       const canvas = document.querySelector("#canvasTime");
-      const width = (canvas.width = this.chartSizes.chartWidth * this.ratio);
-      const height = (canvas.height = this.chartSizes.axisWidth * this.ratio);
       canvas.style.width = this.chartSizes.chartWidth + "px";
       canvas.style.height = this.chartSizes.axisWidth + "px";
+      const width = (canvas.width = this.chartSizes.chartWidth * ratio);
+      const height = (canvas.height = this.chartSizes.axisWidth * ratio);
       const ctx = canvas.getContext("2d");
-      ctx.scale(this.ratio, this.ratio);
+      ctx.scale(ratio, ratio);
+      // vars
       height;
       const data = allData;
       const axis = "x";
       const numOfSteps = 5;
       const param = "time";
+      // vars
+      // create scale
       const scaleTime = new Scale(ctx, data, axis, width, numOfSteps, param);
       scaleTime.drawTime();
     },
-    canvasPrice(allData) {
+    canvasPrice(allData, ratio) {
       const canvas = document.querySelector("#canvasPrice");
-      const width = (canvas.width = this.chartSizes.axisWidth * this.ratio);
-      const height = (canvas.height = this.chartSizes.chartHeight * this.ratio);
+      const width = (canvas.width = this.chartSizes.axisWidth * ratio);
+      const height = (canvas.height = this.chartSizes.chartHeight * ratio);
       canvas.style.width = this.chartSizes.axisWidth + "px";
       canvas.style.height = this.chartSizes.chartHeight + "px";
       const ctx = canvas.getContext("2d");
-      ctx.scale(this.ratio, this.ratio);
+      ctx.scale(ratio, ratio);
+
+      // vars
       width;
       const data = allData;
       const axis = "y";
       const numOfSteps = 7;
       const param = "close";
+      // vars
+      // create scale
       const scaleTime = new Scale(ctx, data, axis, height, numOfSteps, param);
       scaleTime.drawPriceScales();
     },
@@ -294,7 +304,7 @@ export default {
         dateStart,
         dateEnd,
       });
-      this.chartData = this.CHART.sort((a, b) => a[0] - b[0]);
+      this.chartData = [...this.CHART].sort((a, b) => a[0] - b[0]);
       this.getAverageCost();
       this.canvasChart();
     },

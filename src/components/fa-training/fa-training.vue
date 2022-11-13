@@ -9,15 +9,14 @@
 </template>
 
 <script>
-/**@type {HTMLCanvasElement}*/
-
 import { mapActions, mapGetters } from "vuex";
+import Candles from "../../js/candles";
 export default {
   name: "fa-training",
   data() {
     return {
       curpair: "BTC-USD",
-      candles: [],
+      candlesData: [],
       numCandles: 0,
       ctx: null,
       middle: 1,
@@ -26,33 +25,56 @@ export default {
     };
   },
   mounted() {
-    // this.startingWork();
+    this.startingWork();
   },
   computed: {
     ...mapGetters(["CANDLES"]),
   },
   methods: {
-    ...mapActions(["GET_CANDLES_TO_CURRENCY_PAIR_FROM_API"]),
+    ...mapActions(["GET_CANDLES_FROM_API"]),
+    ff() {
+      const canvas = document.querySelector("#canvas");
+      // vars
+      const ctx = canvas.getContext("2d");
+      const width = (canvas.width = 400);
+      const height = (canvas.height = 200);
+      // const middleY = height / 2;
+      const amountDot = (width / this.numCandles).toFixed(1);
+      // vars
+      const candles = new Candles(
+        ctx,
+        this.candlesData,
+        width,
+        height,
+        amountDot,
+        this.high,
+        this.middle,
+        this.low
+      );
+      candles.startWork();
+    },
     canvasAlfa() {
       const canvas = document.querySelector("#canvas");
+      // vars
       this.ctx = canvas.getContext("2d");
       const width = (canvas.width = 400);
       const height = (canvas.height = 200);
       const middleY = height / 2;
-      const candlesWidth = (width / this.numCandles - 2).toFixed(1);
-      const range = this.middle - this.low;
+      const amountDot = (width / this.numCandles - 2).toFixed(1);
+      const priceRange = this.middle - this.low;
+      // vars
 
-      this.candlesShowTest(range, middleY, candlesWidth);
+      this.candlesShowTest(priceRange, middleY, amountDot);
       this.drawMiddleLine(width, middleY);
     },
-    candlesShowTest(range, middleY, candlesWidth) {
+    candlesShowTest(range, middleY, amountDot) {
       this.candles.forEach((item, i) => {
         let curRange = Math.abs(this.middle - item[4]);
         let curInd = curRange / range;
         let heigth = middleY * curInd;
         let up = this.middle < item[4];
-        let x = candlesWidth * i + i * 2;
-        this.drawCandle(up, x, middleY, candlesWidth, heigth);
+        let x = amountDot * i + i * 2;
+        this.drawCandle(up, x, middleY, amountDot, heigth);
       });
     },
     drawCandle(up, x, y, width, height) {
@@ -79,7 +101,7 @@ export default {
       }-${date.getDate()}T${date.getHours()}:${date.getMinutes()}:00`;
     },
     getAverageCost() {
-      const sortArr = (cb) => this.candles.sort((a, b) => cb(a, b))[0];
+      const sortArr = (cb) => [...this.candlesData].sort((a, b) => cb(a, b))[0];
       const lowArr = sortArr((a, b) => a[1] - b[1]) ?? [1, 2, 3];
       const highArr = sortArr((a, b) => b[2] - a[2]) ?? [1, 2, 3];
       this.low = lowArr[1];
@@ -88,19 +110,22 @@ export default {
     },
     async startingWork() {
       const pair = this.curpair;
+      const granules = 60;
       const dateNow = new Date(Date.now());
-      const datePast = new Date(Date.now() - 36e5 * 4);
+      const datePast = new Date(Date.now() - 36e5 * 5);
       const dateStart = this.createDateString(datePast);
       const dateEnd = this.createDateString(dateNow);
-      await this.GET_CANDLES_TO_CURRENCY_PAIR_FROM_API({
+      await this.GET_CANDLES_FROM_API({
         pair,
+        granules,
         dateStart,
         dateEnd,
       });
-      this.candles = this.CANDLES;
-      this.numCandles = this.candles.length;
+      this.candlesData = this.CANDLES.slice(this.CANDLES.length - 18);
+      this.numCandles = this.candlesData.length;
       this.getAverageCost();
-      this.canvasAlfa();
+      this.ff();
+      // this.canvasAlfa();
     },
   },
 };
