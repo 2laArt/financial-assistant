@@ -16,7 +16,9 @@
         v-if="infoCandles.data"
         :style="{
           'top': `${infoCandles.coords.y1}px`,
-          'left':`${infoCandles.coords.x2 + 10}px`,
+          'left':isInfoPosition?
+          `${infoCandles.coords.x2+10}px`:
+          `${infoCandles.coords.x1-80}px`,
           }"
       >
         <div
@@ -34,7 +36,8 @@
 
 <script>
 import { mapActions, mapGetters } from "vuex";
-import Candles from "../../js/candles";
+import Candles from "../../js/candles/candles";
+import lastCandleSocket from "../../js/candles/last-candle-socket";
 export default {
   name: "fa-training",
   data() {
@@ -42,13 +45,13 @@ export default {
       curpair: "BTC-USD",
       candlesData: [],
       allCandlesData: null,
-      numCandles: 0,
       candlesCanvasSize: { width: 400, height: 200 },
       animationLoop: undefined,
       candlesHover: false,
       infoCandles: {},
       mouse: { x: undefined, y: undefined },
       prices: { high: 2, middle: 1, low: 0 },
+      lastCandle: [Date.now(), 16465, 16493, 16479, 16489, 5.32],
     };
   },
   mounted() {
@@ -56,16 +59,22 @@ export default {
   },
   computed: {
     ...mapGetters(["CANDLES"]),
-    // infoPosition(){
-    //   return this.candlesCanvasSize.width - this.infoCandles.x2 > 80?
-    //   `left: `
-    // },
+    isInfoPosition() {
+      const blockWidth = 80;
+      return this.candlesCanvasSize.width - this.infoCandles.coords.x2 >
+        blockWidth
+        ? true
+        : false;
+    },
   },
   watch: {
     candlesHover(val) {
       if (val) {
         this.workCandles();
       }
+    },
+    testff(val) {
+      console.log(val);
     },
   },
   methods: {
@@ -78,18 +87,8 @@ export default {
       canvas.style.height = this.candlesCanvasSize.height;
       const width = (canvas.width = this.candlesCanvasSize.width);
       const height = (canvas.height = this.candlesCanvasSize.height);
-      const amountDot = (width / this.numCandles).toFixed(1);
       // vars
-      const candles = new Candles(
-        ctx,
-        this.candlesData,
-        width,
-        height,
-        amountDot,
-        this.prices.high,
-        this.prices.middle,
-        this.prices.low
-      );
+      const candles = new Candles(ctx, this.candlesData, width, height);
       candles.startWork();
       this.allCandlesData = candles.allCandlesData;
       this.hoverOnCandle(this.allCandlesData);
@@ -156,10 +155,12 @@ export default {
         dateStart,
         dateEnd,
       });
-      this.candlesData = this.CANDLES.slice(this.CANDLES.length - 12);
-      this.numCandles = this.candlesData.length;
+      this.candlesData = this.CANDLES.slice(this.CANDLES.length - 10);
+      this.candlesData.push(lastCandleSocket);
       this.getAverageCost();
       this.workCandles();
+      this.lastCandle = lastCandleSocket;
+      // console.log(this.lastCandle);
     },
   },
 };

@@ -1,35 +1,34 @@
 /**@type {HTMLCanvasElement}*/
 
 class Candles {
-	constructor(ctx, candles, width, height, amountDots, highPrice, middlePrice, lowPrice) {
+	constructor(ctx, candles, width, height) {
 		this.ctx = ctx;
 		this.candles = candles;
 		this.width = width;
 		this.height = height;
-		this.middleOfChart = height / 2;
-		this.amountDots = amountDots;
-		this.highPrice = highPrice;
-		this.middlePrice = middlePrice;
-		this.lowPrice = lowPrice;
-		this.priceRange = this.highPrice - this.lowPrice;
+		this.amountDots = (this.width / this.candles.length).toFixed(1);
+		this.lowPrice = 0;
+		this.highPrice = 1;
+		this.priceRange = 1;
 		this.candleWidth = 10;
 		this.allCandlesData = [];
 	}
 	startWork() {
+		this.getPriceRange();
 		this.candles.forEach((item, i) => {
 			const [low, high, open, close] = this.coordsItem(item); //coords
-			const isUp = open > close;
-			const color = isUp ? '#115A11' : '#794444';
+			const isDown = open < close;
+			const color = isDown ? '#794444' : '#115A11';
 			const candleHeight = Math.abs(open - close);
 			const x = Math.floor(i * this.amountDots);
-			const y = isUp ? close : open;
+			const y = isDown ? open : close;
 			this.drawCandleMiddleLine(
 				x + this.candleWidth / 2,
 				low,
 				high
 			);
 			this.drawRect(x, y, candleHeight, color);
-			this.pushInAllCandlesData(x, low, x + this.candleWidth, high, item);
+			this.pushInAllCandlesData(x, high, x + this.candleWidth, low, item);
 		});
 	}
 	pushInAllCandlesData(x1, y1, x2, y2, data) {
@@ -75,11 +74,18 @@ class Candles {
 			.slice(first, last)
 			.map(item => this.getCoordsOfPrice(item));
 	}
+	getPriceRange() {
+		const sortArr = (cb) => [...this.candles].sort((a, b) => cb(a, b))[0];
+		this.lowPrice = sortArr((a, b) => a[1] - b[1])[1];
+		this.highPrice = sortArr((a, b) => b[2] - a[2])[2];
+		this.priceRange = this.highPrice - this.lowPrice;
+		console.log(this.lowPrice)
+	}
 	getCoordsOfPrice(price) {
 		// ratio of coordinates to price 
 		const curRange = price - this.lowPrice;
 		const persent = curRange / this.priceRange;
-		const coord = persent * this.height;
+		const coord = this.height - (persent * this.height);
 		return Math.floor(coord);
 	}
 }
