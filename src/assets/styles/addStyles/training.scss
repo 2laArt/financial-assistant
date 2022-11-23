@@ -7,8 +7,31 @@
 	margin: .5rem 0;
 }
 
-#canvas {
+.canldes_box {
 	width: 400px;
 	height: 200px;
 	margin: 0 auto;
+	position: relative;
+}
+
+#canvas {}
+
+.cursor_hover {
+	cursor: pointer;
+}
+
+// info
+.info_candles {
+	position: absolute;
+	top: 0;
+	left: 1.5rem;
+	// width: 5rem;
+	// min-width: 10rem;
+	// height: 15rem;
+	background: rgba($root-color, .3);
+	color: $table-color;
+	font-weight: 300;
+	font-size: 1rem;
+	text-align: left;
+	transition: opacity .2s linear;
 }

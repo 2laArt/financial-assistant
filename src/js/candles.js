@@ -13,54 +13,74 @@ class Candles {
 		this.lowPrice = lowPrice;
 		this.priceRange = this.highPrice - this.lowPrice;
 		this.candleWidth = 10;
+		this.allCandlesData = [];
 	}
 	startWork() {
-		const xStart = 20;
 		this.candles.forEach((item, i) => {
-			const [low, high, open, close] = this.coordsYitem(item);
-			const isUp = open > close
+			const [low, high, open, close] = this.coordsItem(item); //coords
+			const isUp = open > close;
 			const color = isUp ? '#115A11' : '#794444';
-			const candleHeight = Math.abs(open - close)
-			const x = i * this.amountDots + (i * 5) + xStart;
+			const candleHeight = Math.abs(open - close);
+			const x = Math.floor(i * this.amountDots);
 			const y = isUp ? close : open;
 			this.drawCandleMiddleLine(
 				x + this.candleWidth / 2,
 				low,
 				high
-			)
-			this.drawCandle(x, y, candleHeight, color);
-			// 794444 red
-			// 115A11 green
+			);
+			this.drawRect(x, y, candleHeight, color);
+			this.pushInAllCandlesData(x, low, x + this.candleWidth, high, item);
 		});
+	}
+	pushInAllCandlesData(x1, y1, x2, y2, data) {
+		const candle = {
+			coords: { x1, y1, x2, y2 },
+			data: data
+		};
+		this.allCandlesData.push(candle);
+	}
+	drawLine(coords) {
+		this.ctx.beginPath();
+		this.ctx.setLineDash([]);
+		this.ctx.lineWidth = 1;
+		this.ctx.strokeStyle = "#DCDCDC";
+		this.ctx.moveTo(coords.x1, coords.y1);
+		this.ctx.lineTo(coords.x2, coords.y2);
+		this.ctx.stroke();
+		//!!!
 	}
 	drawCandleMiddleLine(x, y1, y2) {
 		// #DCDCDC
 		this.ctx.beginPath();
 		this.ctx.setLineDash([3, 2]);
-		this.ctx.strokeStyle = '#DCDCDC';
 		this.ctx.lineWidth = 0.3;
+		this.ctx.strokeStyle = '#DCDCDC';
 		this.ctx.moveTo(x, y1);
 		this.ctx.lineTo(x, y2);
 		this.ctx.stroke();
 	}
-	drawCandle(x, y, candleHeight, color) {
+	drawRect(x, y, candleHeight, color) {
+		const height = candleHeight < 1 ? 1 : candleHeight;//????/
 		this.ctx.beginPath();
 		this.ctx.fillStyle = color;
-		this.ctx.fillRect(x, y, this.candleWidth, candleHeight)
+		this.ctx.fillRect(x, y, this.candleWidth, height)
 		this.ctx.fill();
 	}
-	coordsYitem(candle) {
-		const a = 1; //rename
-		const b = 6;
+	coordsItem(candle) {
+		//time low high open close vol
+		// start-end prices from arr candles
+		const first = 1;
+		const last = 5;
 		return candle
-			.slice(a, b)
-			.map(item => {
-				const curRange = item - this.lowPrice;
-				const persent = curRange / this.priceRange;
-				const coord = persent * this.height;
-				return coord;
-			});
+			.slice(first, last)
+			.map(item => this.getCoordsOfPrice(item));
+	}
+	getCoordsOfPrice(price) {
+		// ratio of coordinates to price 
+		const curRange = price - this.lowPrice;
+		const persent = curRange / this.priceRange;
+		const coord = persent * this.height;
+		return Math.floor(coord);
 	}
 }
-//time low high open close vol
 export default Candles

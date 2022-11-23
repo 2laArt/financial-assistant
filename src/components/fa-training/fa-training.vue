@@ -1,9 +1,33 @@
 <template>
   <div class="fa_training">
     <h3 class="fa_training_title">Training</h3>
-    <h6 style="font-size:2.5rem;"><mark>temporarily not working</mark></h6>
-    <canvas id="canvas">
-    </canvas>
+    <div class="canldes_box">
+      <canvas
+        id="canvas"
+        @mousemove="moveMouseOnCanvas($event)"
+        @mouseover="candlesHover = true"
+        @mouseout="candlesHover = false"
+        :class="{
+          'cursor_hover': infoCandles.data
+        }"
+      />
+      <div
+        class="info_candles"
+        v-if="infoCandles.data"
+        :style="{
+          'top': `${infoCandles.coords.y1}px`,
+          'left':`${infoCandles.coords.x2 + 10}px`,
+          }"
+      >
+        <div
+          v-for="item in infoCandles.data"
+          :key="item"
+        >
+          {{item}}
+        </div>
+      </div>
+    </div>
+
   </div>
 
 </template>
@@ -17,11 +41,14 @@ export default {
     return {
       curpair: "BTC-USD",
       candlesData: [],
+      allCandlesData: null,
       numCandles: 0,
-      ctx: null,
-      middle: 1,
-      low: 0,
-      high: 2,
+      candlesCanvasSize: { width: 400, height: 200 },
+      animationLoop: undefined,
+      candlesHover: false,
+      infoCandles: {},
+      mouse: { x: undefined, y: undefined },
+      prices: { high: 2, middle: 1, low: 0 },
     };
   },
   mounted() {
@@ -29,16 +56,28 @@ export default {
   },
   computed: {
     ...mapGetters(["CANDLES"]),
+    // infoPosition(){
+    //   return this.candlesCanvasSize.width - this.infoCandles.x2 > 80?
+    //   `left: `
+    // },
+  },
+  watch: {
+    candlesHover(val) {
+      if (val) {
+        this.workCandles();
+      }
+    },
   },
   methods: {
     ...mapActions(["GET_CANDLES_FROM_API"]),
-    ff() {
+    workCandles() {
       const canvas = document.querySelector("#canvas");
       // vars
       const ctx = canvas.getContext("2d");
-      const width = (canvas.width = 400);
-      const height = (canvas.height = 200);
-      // const middleY = height / 2;
+      canvas.style.width = this.candlesCanvasSize.width;
+      canvas.style.height = this.candlesCanvasSize.height;
+      const width = (canvas.width = this.candlesCanvasSize.width);
+      const height = (canvas.height = this.candlesCanvasSize.height);
       const amountDot = (width / this.numCandles).toFixed(1);
       // vars
       const candles = new Candles(
@@ -47,53 +86,49 @@ export default {
         width,
         height,
         amountDot,
-        this.high,
-        this.middle,
-        this.low
+        this.prices.high,
+        this.prices.middle,
+        this.prices.low
       );
       candles.startWork();
-    },
-    canvasAlfa() {
-      const canvas = document.querySelector("#canvas");
-      // vars
-      this.ctx = canvas.getContext("2d");
-      const width = (canvas.width = 400);
-      const height = (canvas.height = 200);
-      const middleY = height / 2;
-      const amountDot = (width / this.numCandles - 2).toFixed(1);
-      const priceRange = this.middle - this.low;
-      // vars
-
-      this.candlesShowTest(priceRange, middleY, amountDot);
-      this.drawMiddleLine(width, middleY);
-    },
-    candlesShowTest(range, middleY, amountDot) {
-      this.candles.forEach((item, i) => {
-        let curRange = Math.abs(this.middle - item[4]);
-        let curInd = curRange / range;
-        let heigth = middleY * curInd;
-        let up = this.middle < item[4];
-        let x = amountDot * i + i * 2;
-        this.drawCandle(up, x, middleY, amountDot, heigth);
-      });
-    },
-    drawCandle(up, x, y, width, height) {
-      if (up) {
-        this.ctx.fillStyle = "green";
-        this.ctx.fillRect(x, y, width, -height);
+      this.allCandlesData = candles.allCandlesData;
+      this.hoverOnCandle(this.allCandlesData);
+      // remove animation, reset mouse
+      if (!this.candlesHover) {
+        this.mouse = { x: undefined, y: undefined };
+        cancelAnimationFrame(this.animationLoop);
         return;
       }
-      this.ctx.fillStyle = "red";
-      this.ctx.fillRect(x, y, width, height);
+      // loop
+      this.animationLoop = requestAnimationFrame(this.workCandles);
     },
-    drawMiddleLine(width, y) {
-      this.ctx.setLineDash([6, 3]);
-      this.ctx.strokeStyle = "#ccc";
-      this.ctx.lineWidth = 0.2;
-      this.ctx.beginPath();
-      this.ctx.moveTo(0, y);
-      this.ctx.lineTo(width, y);
-      this.ctx.stroke();
+    hoverOnCandle(candles) {
+      this.infoCandles = {};
+      candles.forEach((candle) => {
+        const { coords, data } = candle;
+        if (
+          coords.x1 <= this.mouse.x &&
+          coords.x2 >= this.mouse.x &&
+          coords.y1 <= this.mouse.y &&
+          coords.y2 >= this.mouse.y &&
+          this.candlesHover
+        ) {
+          //time low high open close vol
+          this.infoCandles.coords = coords;
+          this.infoCandles.data = [
+            `low: ${data[1]}$`,
+            `high: ${data[2]}$`,
+            `open: ${data[3]}$`,
+            `close: ${data[4]}$`,
+            `vol: ${data[5]}$`,
+          ];
+          return;
+        }
+        //  else
+      });
+    },
+    moveMouseOnCanvas(event) {
+      this.mouse = { x: event.offsetX, y: event.offsetY };
     },
     createDateString(date) {
       return `${date.getFullYear()}-${
@@ -104,9 +139,9 @@ export default {
       const sortArr = (cb) => [...this.candlesData].sort((a, b) => cb(a, b))[0];
       const lowArr = sortArr((a, b) => a[1] - b[1]) ?? [1, 2, 3];
       const highArr = sortArr((a, b) => b[2] - a[2]) ?? [1, 2, 3];
-      this.low = lowArr[1];
-      this.high = highArr[2];
-      this.middle = Math.floor((this.low + this.high) / 2);
+      this.prices.low = lowArr[1];
+      this.prices.high = highArr[2];
+      this.prices.middle = Math.floor((this.prices.low + this.prices.high) / 2);
     },
     async startingWork() {
       const pair = this.curpair;
@@ -121,11 +156,10 @@ export default {
         dateStart,
         dateEnd,
       });
-      this.candlesData = this.CANDLES.slice(this.CANDLES.length - 18);
+      this.candlesData = this.CANDLES.slice(this.CANDLES.length - 12);
       this.numCandles = this.candlesData.length;
       this.getAverageCost();
-      this.ff();
-      // this.canvasAlfa();
+      this.workCandles();
     },
   },
 };
