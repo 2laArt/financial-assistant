@@ -24,7 +24,8 @@
 .info_candles {
 	position: absolute;
 	top: 0;
-	left: 1.5rem;
+	left: 0;
+	max-width: 80px;
 	background: rgba($root-color, .3);
 	color: $table-color;
 	font-weight: 300;

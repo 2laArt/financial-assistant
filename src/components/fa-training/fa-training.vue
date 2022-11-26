@@ -15,12 +15,11 @@
         class="info_candles"
         v-if="infoCandles.data"
         :style="{
-          'top': `${infoCandles.coords.y1}px`,
-          'left':isInfoPosition?
-          `${infoCandles.coords.x2+10}px`:
-          `${infoCandles.coords.x1-80}px`,
+          'top': isInfoPositionY,
+          'left':isInfoPositionX,
           }"
       >
+
         <div
           v-for="item in infoCandles.data"
           :key="item"
@@ -59,28 +58,39 @@ export default {
   },
   computed: {
     ...mapGetters(["CANDLES"]),
-    isInfoPosition() {
+    isInfoPositionX() {
       const blockWidth = 80;
       return this.candlesCanvasSize.width - this.infoCandles.coords.x2 >
         blockWidth
-        ? true
-        : false;
+        ? `${this.infoCandles.coords.x2 + 10}px`
+        : `${this.infoCandles.coords.x1 - blockWidth}px`;
+    },
+    isInfoPositionY() {
+      const blockHeight = 70;
+      return this.candlesCanvasSize.height - this.infoCandles.coords.y1 >
+        blockHeight
+        ? `${this.infoCandles.coords.y1}px`
+        : `${this.infoCandles.coords.y2 - blockHeight}px`;
+    },
+    posInfo() {
+      return {
+        bottom: "100px",
+        left: "100%",
+      };
     },
   },
   watch: {
     candlesHover(val) {
       if (val) {
-        this.workCandles();
+        // this.workCandles();
       }
-    },
-    testff(val) {
-      console.log(val);
     },
   },
   methods: {
     ...mapActions(["GET_CANDLES_FROM_API"]),
     workCandles() {
       const canvas = document.querySelector("#canvas");
+      if (!canvas) return;
       // vars
       const ctx = canvas.getContext("2d");
       canvas.style.width = this.candlesCanvasSize.width;
@@ -91,13 +101,13 @@ export default {
       const candles = new Candles(ctx, this.candlesData, width, height);
       candles.startWork();
       this.allCandlesData = candles.allCandlesData;
-      this.hoverOnCandle(this.allCandlesData);
       // remove animation, reset mouse
       if (!this.candlesHover) {
         this.mouse = { x: undefined, y: undefined };
-        cancelAnimationFrame(this.animationLoop);
-        return;
+        // cancelAnimationFrame(this.animationLoop);
+        // return;
       }
+      this.hoverOnCandle(this.allCandlesData);
       // loop
       this.animationLoop = requestAnimationFrame(this.workCandles);
     },
@@ -109,8 +119,7 @@ export default {
           coords.x1 <= this.mouse.x &&
           coords.x2 >= this.mouse.x &&
           coords.y1 <= this.mouse.y &&
-          coords.y2 >= this.mouse.y &&
-          this.candlesHover
+          coords.y2 >= this.mouse.y
         ) {
           //time low high open close vol
           this.infoCandles.coords = coords;
@@ -160,7 +169,7 @@ export default {
       this.getAverageCost();
       this.workCandles();
       this.lastCandle = lastCandleSocket;
-      // console.log(this.lastCandle);
+      console.log(this.lastCandle);
     },
   },
 };
