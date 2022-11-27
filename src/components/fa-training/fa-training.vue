@@ -36,7 +36,7 @@
 <script>
 import { mapActions, mapGetters } from "vuex";
 import Candles from "../../js/candles/candles";
-import lastCandleSocket from "../../js/candles/last-candle-socket";
+import { getUpdatePrice } from "../../js/candles/last-candle-socket";
 export default {
   name: "fa-training",
   data() {
@@ -50,7 +50,7 @@ export default {
       infoCandles: {},
       mouse: { x: undefined, y: undefined },
       prices: { high: 2, middle: 1, low: 0 },
-      lastCandle: [Date.now(), 16465, 16493, 16479, 16489, 5.32],
+      lastCandle: [],
     };
   },
   mounted() {
@@ -79,16 +79,10 @@ export default {
       };
     },
   },
-  watch: {
-    candlesHover(val) {
-      if (val) {
-        // this.workCandles();
-      }
-    },
-  },
+  watch: {},
   methods: {
     ...mapActions(["GET_CANDLES_FROM_API"]),
-    workCandles() {
+    workCandles(price) {
       const canvas = document.querySelector("#canvas");
       if (!canvas) return;
       // vars
@@ -98,6 +92,10 @@ export default {
       const width = (canvas.width = this.candlesCanvasSize.width);
       const height = (canvas.height = this.candlesCanvasSize.height);
       // vars
+      this.candlePrices(
+        this.candlesData[this.candlesData.length - 1][4],
+        price
+      );
       const candles = new Candles(ctx, this.candlesData, width, height);
       candles.startWork();
       this.allCandlesData = candles.allCandlesData;
@@ -105,11 +103,10 @@ export default {
       if (!this.candlesHover) {
         this.mouse = { x: undefined, y: undefined };
         // cancelAnimationFrame(this.animationLoop);
-        // return;
+        return;
       }
-      this.hoverOnCandle(this.allCandlesData);
       // loop
-      this.animationLoop = requestAnimationFrame(this.workCandles);
+      // this.animationLoop = requestAnimationFrame(this.workCandles);
     },
     hoverOnCandle(candles) {
       this.infoCandles = {};
@@ -130,13 +127,13 @@ export default {
             `close: ${data[4]}$`,
             `vol: ${data[5]}$`,
           ];
-          return;
+          // return;
         }
-        //  else
       });
     },
     moveMouseOnCanvas(event) {
       this.mouse = { x: event.offsetX, y: event.offsetY };
+      this.hoverOnCandle(this.allCandlesData);
     },
     createDateString(date) {
       return `${date.getFullYear()}-${
@@ -150,6 +147,23 @@ export default {
       this.prices.low = lowArr[1];
       this.prices.high = highArr[2];
       this.prices.middle = Math.floor((this.prices.low + this.prices.high) / 2);
+    },
+    candlePrices(closePrice, price) {
+      if (this.lastCandle.length === 0) {
+        const numOfElem = 4;
+        this.lastCandle = [Date.now(), ...Array(numOfElem).fill(closePrice)];
+        this.candlesData.push(this.lastCandle);
+      }
+      if (!this.lastCandle[3]) this.lastCandle[3] = price;
+      if (this.lastCandle[1] > price || !this.lastCandle[1])
+        this.lastCandle[1] = price;
+      if (this.lastCandle[2] < price || !this.lastCandle[2])
+        this.lastCandle[2] = price;
+      this.lastCandle[4] = price;
+      console.log(price);
+    },
+    ff(price) {
+      console.log(price);
     },
     async startingWork() {
       const pair = this.curpair;
@@ -165,11 +179,9 @@ export default {
         dateEnd,
       });
       this.candlesData = this.CANDLES.slice(this.CANDLES.length - 10);
-      this.candlesData.push(lastCandleSocket);
       this.getAverageCost();
       this.workCandles();
-      this.lastCandle = lastCandleSocket;
-      console.log(this.lastCandle);
+      getUpdatePrice(this.curpair, (price) => this.workCandles(price));
     },
   },
 };

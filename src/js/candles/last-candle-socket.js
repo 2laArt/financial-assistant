@@ -1,14 +1,9 @@
 // 
 
 const ws = new WebSocket('wss://ws-feed.exchange.coinbase.com');
-const lastCandle =
-	[Date.now(),
-		undefined,
-		undefined,
-		undefined,
-		undefined,
-		5.322,
-	];
+
+const priceHandlers = new Map();
+
 ws.addEventListener('open', () => {
 	let msg = {
 		"type": "subscribe",
@@ -22,17 +17,16 @@ ws.addEventListener('open', () => {
 	ws.send(JSON.stringify(msg))
 })
 ws.addEventListener('message', (e) => {
-	const answer = JSON.parse(e.data)
-	candlePrices(answer.price)
-	// lastCandle = console.log(answer);
+	const response = JSON.parse(e.data);
+	const id = response?.product_id;
+	const price = response.price
+	if (!id) return;
+	// candlePrices(response.price)
+	const handler = priceHandlers.get(id) ?? [];
+	handler.forEach(fn => fn(price));
 })
-function candlePrices(price) {
-	if (!lastCandle[3]) lastCandle[3] = price;
-	if (lastCandle[1] > price || !lastCandle[1]) lastCandle[1] = price;
-	if (lastCandle[2] < price || !lastCandle[2]) lastCandle[2] = price;
-	lastCandle[4] = price;
+
+export function getUpdatePrice(pair, cb) {
+	const cur = priceHandlers.get(pair) ?? []; //rename!!
+	priceHandlers.set(pair, [...cur, cb])
 }
-
-
-window.testcandles = lastCandle;
-export default lastCandle;

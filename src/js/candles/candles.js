@@ -18,7 +18,7 @@ class Candles {
 		this.candles.forEach((item, i) => {
 			const [low, high, open, close] = this.coordsItem(item); //coords
 			const isDown = open < close;
-			const color = isDown ? '#794444' : '#115A11';
+			const color = isDown ? '#9c2d2d' : '#2da850';
 			const candleHeight = Math.abs(open - close);
 			const x = Math.floor(i * this.amountDots);
 			const y = isDown ? open : close;
@@ -52,7 +52,7 @@ class Candles {
 		// #DCDCDC
 		this.ctx.beginPath();
 		this.ctx.setLineDash([3, 2]);
-		this.ctx.lineWidth = 0.3;
+		this.ctx.lineWidth = 1;
 		this.ctx.strokeStyle = '#DCDCDC';
 		this.ctx.moveTo(x, y1);
 		this.ctx.lineTo(x, y2);
@@ -79,7 +79,7 @@ class Candles {
 		this.lowPrice = sortArr((a, b) => a[1] - b[1])[1];
 		this.highPrice = sortArr((a, b) => b[2] - a[2])[2];
 		this.priceRange = this.highPrice - this.lowPrice;
-		console.log(this.lowPrice)
+		// console.log(this.lowPrice)
 	}
 	getCoordsOfPrice(price) {
 		// ratio of coordinates to price 
