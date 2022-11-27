@@ -13,7 +13,7 @@
       />
       <div
         class="info_candles"
-        v-if="infoCandles.data"
+        v-if="infoCandles.data && candlesHover"
         :style="{
           'top': isInfoPositionY,
           'left':isInfoPositionX,
@@ -102,30 +102,28 @@ export default {
       // remove animation, reset mouse
       if (!this.candlesHover) {
         this.mouse = { x: undefined, y: undefined };
-        // cancelAnimationFrame(this.animationLoop);
-        return;
       }
-      // loop
-      // this.animationLoop = requestAnimationFrame(this.workCandles);
+      this.hoverOnCandle();
     },
-    hoverOnCandle(candles) {
+    hoverOnCandle() {
       this.infoCandles = {};
-      candles.forEach((candle) => {
+      this.allCandlesData.forEach((candle) => {
         const { coords, data } = candle;
         if (
           coords.x1 <= this.mouse.x &&
           coords.x2 >= this.mouse.x &&
           coords.y1 <= this.mouse.y &&
-          coords.y2 >= this.mouse.y
+          coords.y2 >= this.mouse.y &&
+          this.candlesHover
         ) {
           //time low high open close vol
           this.infoCandles.coords = coords;
           this.infoCandles.data = [
+            // `time: ${data[0].getHours()}`,
             `low: ${data[1]}$`,
             `high: ${data[2]}$`,
             `open: ${data[3]}$`,
             `close: ${data[4]}$`,
-            `vol: ${data[5]}$`,
           ];
           // return;
         }
@@ -133,7 +131,7 @@ export default {
     },
     moveMouseOnCanvas(event) {
       this.mouse = { x: event.offsetX, y: event.offsetY };
-      this.hoverOnCandle(this.allCandlesData);
+      this.hoverOnCandle();
     },
     createDateString(date) {
       return `${date.getFullYear()}-${
@@ -149,21 +147,24 @@ export default {
       this.prices.middle = Math.floor((this.prices.low + this.prices.high) / 2);
     },
     candlePrices(closePrice, price) {
-      if (this.lastCandle.length === 0) {
+      if (
+        this.lastCandle.length === 0 ||
+        this.lastCandle[0] + 6e4 < Date.now()
+      ) {
         const numOfElem = 4;
         this.lastCandle = [Date.now(), ...Array(numOfElem).fill(closePrice)];
+        this.candlesData.shift();
         this.candlesData.push(this.lastCandle);
       }
+      this.changeLastCandlesPrice(price);
+    },
+    changeLastCandlesPrice(price) {
       if (!this.lastCandle[3]) this.lastCandle[3] = price;
       if (this.lastCandle[1] > price || !this.lastCandle[1])
         this.lastCandle[1] = price;
       if (this.lastCandle[2] < price || !this.lastCandle[2])
         this.lastCandle[2] = price;
       this.lastCandle[4] = price;
-      console.log(price);
-    },
-    ff(price) {
-      console.log(price);
     },
     async startingWork() {
       const pair = this.curpair;

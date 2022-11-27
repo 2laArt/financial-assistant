@@ -93,3 +93,28 @@
 	}
 
 }
+
+.selected_currency {
+	background: $root-color;
+	color: $white-color;
+	border: transparent;
+	transition: border .2s linear;
+	padding: .2rem .4rem;
+	border-radius: 5px;
+	border: 1px solid transparent;
+	animation: sel_cur 5s linear infinite;
+
+	@keyframes sel_cur {
+		0% {
+			border: 1px solid transparent;
+		}
+
+		10% {
+			border: 1px solid $green-blue-color;
+		}
+
+		30% {
+			border: 1px solid transparent;
+		}
+	}
+}
