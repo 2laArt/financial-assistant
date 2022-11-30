@@ -44,8 +44,28 @@ export default {
       curpair: "BTC-USD",
       candlesData: [],
       allCandlesData: null,
-      candlesCanvasSize: { width: 400, height: 200 },
-      animationLoop: undefined,
+      candlesCanvasSize: {},
+      allCanvasSizes: {
+        sm: {
+          canvasWidth: 250,
+          canvasHeight: 200,
+          amount: 10,
+          candleWidth: 10,
+        },
+        md: {
+          canvasWidth: 400,
+          canvasHeight: 300,
+          amount: 20,
+          candleWidth: 10,
+        },
+        lg: {
+          canvasWidth: 600,
+          canvasHeight: 400,
+          amount: 40,
+          candleWidth: 10,
+        },
+      },
+      windowSize: "",
       candlesHover: false,
       infoCandles: {},
       mouse: { x: undefined, y: undefined },
@@ -54,49 +74,67 @@ export default {
     };
   },
   mounted() {
+    this.changeCanvasSizes();
+    window.addEventListener("resize", this.changeCanvasSizes);
     this.startingWork();
+  },
+  unmounted() {
+    window.removeEventListener("resize", this.changeCanvasSizes);
   },
   computed: {
     ...mapGetters(["CANDLES"]),
     isInfoPositionX() {
       const blockWidth = 80;
-      return this.candlesCanvasSize.width - this.infoCandles.coords.x2 >
+      return this.candlesCanvasSize.canvasWidth - this.infoCandles.coords.x2 >
         blockWidth
         ? `${this.infoCandles.coords.x2 + 10}px`
         : `${this.infoCandles.coords.x1 - blockWidth}px`;
     },
     isInfoPositionY() {
       const blockHeight = 70;
-      return this.candlesCanvasSize.height - this.infoCandles.coords.y1 >
+      return this.candlesCanvasSize.canvasHeight - this.infoCandles.coords.y1 >
         blockHeight
         ? `${this.infoCandles.coords.y1}px`
         : `${this.infoCandles.coords.y2 - blockHeight}px`;
     },
-    posInfo() {
-      return {
-        bottom: "100px",
-        left: "100%",
-      };
+  },
+  watch: {
+    windowSize(val) {
+      this.candlesCanvasSize = this.allCanvasSizes[val];
+      getUpdatePrice(this.curpair, (price) =>
+        this.workCandles(
+          price,
+          this.candlesCanvasSize.canvasWidth,
+          this.candlesCanvasSize.canvasHeight
+        )
+      );
+      console.log(val);
     },
   },
-  watch: {},
   methods: {
     ...mapActions(["GET_CANDLES_FROM_API"]),
-    workCandles(price) {
+    workCandles(price, canvasWidth, canvasHeight) {
       const canvas = document.querySelector("#canvas");
       if (!canvas) return;
       // vars
       const ctx = canvas.getContext("2d");
-      canvas.style.width = this.candlesCanvasSize.width;
-      canvas.style.height = this.candlesCanvasSize.height;
-      const width = (canvas.width = this.candlesCanvasSize.width);
-      const height = (canvas.height = this.candlesCanvasSize.height);
+      canvas.style.width = canvasWidth;
+      canvas.style.height = canvasHeight;
+      const width = (canvas.width = canvasWidth);
+      const height = (canvas.height = canvasHeight);
       // vars
       this.candlePrices(
         this.candlesData[this.candlesData.length - 1][4],
         price
       );
-      const candles = new Candles(ctx, this.candlesData, width, height);
+      const candles = new Candles(
+        ctx,
+        this.candlesData,
+        width,
+        height,
+        this.candlesCanvasSize.candleWidth
+      );
+      candles.updateCanvas();
       candles.startWork();
       this.allCandlesData = candles.allCandlesData;
       // remove animation, reset mouse
@@ -131,7 +169,7 @@ export default {
     },
     moveMouseOnCanvas(event) {
       this.mouse = { x: event.offsetX, y: event.offsetY };
-      this.hoverOnCandle();
+      if (this.allCandlesData) this.hoverOnCandle();
     },
     createDateString(date) {
       return `${date.getFullYear()}-${
@@ -166,6 +204,16 @@ export default {
         this.lastCandle[2] = price;
       this.lastCandle[4] = price;
     },
+    changeCanvasSizes() {
+      const currentWindowSize = window.innerWidth;
+      const breakpoints = [530, 800];
+      const sizes = ["sm", "md", "lg"];
+      const bpIndex = breakpoints.findIndex((i) => i > currentWindowSize);
+      const index = bpIndex < 0 ? 2 : bpIndex;
+      if (this.windowSize !== sizes[index]) {
+        this.windowSize = sizes[index];
+      }
+    },
     async startingWork() {
       const pair = this.curpair;
       const granules = 60;
@@ -179,10 +227,22 @@ export default {
         dateStart,
         dateEnd,
       });
-      this.candlesData = this.CANDLES.slice(this.CANDLES.length - 10);
+      this.candlesData = this.CANDLES.slice(
+        this.CANDLES.length - this.candlesCanvasSize.amount
+      );
       this.getAverageCost();
-      this.workCandles();
-      getUpdatePrice(this.curpair, (price) => this.workCandles(price));
+      // this.workCandles(
+      //   price,
+      //   this.candlesCanvasSize.canvasWidth,
+      //   this.candlesCanvasSize.canvasHeight
+      // );
+      getUpdatePrice(this.curpair, (price) =>
+        this.workCandles(
+          price,
+          this.candlesCanvasSize.canvasWidth,
+          this.candlesCanvasSize.canvasHeight
+        )
+      );
     },
   },
 };

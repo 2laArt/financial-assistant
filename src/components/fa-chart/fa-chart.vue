@@ -155,11 +155,10 @@ export default {
     ...mapActions(["GET_CHART_TO_CURRENCY_PAIR_FROM_API"]),
     canvasChart() {
       const canvas = document.querySelector("#canvasChart");
-      const ratio = window.devicePixelRatio;
+      // window.devicePixelRatio > 1 ? 1.2 : 1
+      const ratio = 1;
       if (!canvas) return;
 
-      canvas.style.width = this.chartSizes.chartWidth + "px";
-      canvas.style.height = this.chartSizes.chartHeight + "px";
       // vars
       const ctx = canvas.getContext("2d");
       const width = (canvas.width = this.chartSizes.chartWidth * ratio);
@@ -168,6 +167,11 @@ export default {
       const amountDot = (width / data.length).toFixed(1);
       const priceRange = this.prices.middle - this.prices.low;
       // vars
+      // styles
+      canvas.style.width = this.chartSizes.chartWidth + "px";
+      canvas.style.height = this.chartSizes.chartHeight + "px";
+
+      ctx.scale(ratio, ratio);
       // create chart
       const chartCanvas = new Chart(
         ctx,
@@ -178,7 +182,6 @@ export default {
         this.prices.middle,
         data
       );
-      ctx.scale(ratio, ratio);
       // clear
       chartCanvas.updateCanvas();
 

@@ -12,6 +12,12 @@ class Candles {
 		this.priceRange = 1;
 		this.candleWidth = 10;
 		this.allCandlesData = [];
+		this.color = {
+			green: "#07a663",
+			gray: "#ccc",
+			root: "#181822",
+			red: "#c90842",
+		}
 	}
 	startWork() {
 		this.getPriceRange();
@@ -30,6 +36,12 @@ class Candles {
 			this.drawRect(x, y, candleHeight, color);
 			this.pushInAllCandlesData(x, high, x + this.candleWidth, low, item);
 		});
+	}
+	updateCanvas() {
+		this.ctx.fillStyle = this.color.root;
+		this.ctx.beginPath();
+		this.ctx.fillRect(0, 0, this.width, this.height);
+		this.ctx.stroke();
 	}
 	pushInAllCandlesData(x1, y1, x2, y2, data) {
 		const candle = {
@@ -74,13 +86,6 @@ class Candles {
 			.slice(first, last)
 			.map(item => this.getCoordsOfPrice(item));
 	}
-	getPriceRange() {
-		const sortArr = (cb) => [...this.candles].sort((a, b) => cb(a, b))[0];
-		this.lowPrice = sortArr((a, b) => a[1] - b[1])[1];
-		this.highPrice = sortArr((a, b) => b[2] - a[2])[2];
-		this.priceRange = this.highPrice - this.lowPrice;
-		// console.log(this.lowPrice)
-	}
 	getCoordsOfPrice(price) {
 		// ratio of coordinates to price 
 		const curRange = price - this.lowPrice;
@@ -88,5 +93,13 @@ class Candles {
 		const coord = this.height - (persent * this.height);
 		return Math.floor(coord);
 	}
+	getPriceRange() {
+		const sortArr = (cb) => [...this.candles].sort((a, b) => cb(a, b))[0];
+		this.lowPrice = sortArr((a, b) => a[1] - b[1])[1];
+		this.highPrice = sortArr((a, b) => b[2] - a[2])[2];
+		this.priceRange = this.highPrice - this.lowPrice;
+		// console.log(this.lowPrice)
+	}
+
 }
 export default Candles

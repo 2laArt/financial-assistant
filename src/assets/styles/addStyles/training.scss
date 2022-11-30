@@ -8,13 +8,16 @@
 }
 
 .canldes_box {
-	width: 400px;
-	height: 200px;
+	// width: 400px;
+	// height: 200px;
+	display: inline-block;
 	margin: 0 auto;
 	position: relative;
 }
 
-#canvas {}
+#canvas {
+	image-rendering: pixelated;
+}
 
 .cursor_hover {
 	cursor: pointer;
