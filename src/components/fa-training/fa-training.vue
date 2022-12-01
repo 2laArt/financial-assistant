@@ -42,20 +42,18 @@ export default {
   data() {
     return {
       curpair: "BTC-USD",
-      candlesData: [],
-      allCandlesData: null,
       candlesCanvasSize: {},
       allCanvasSizes: {
         sm: {
           canvasWidth: 250,
           canvasHeight: 200,
-          amount: 10,
+          amount: 15,
           candleWidth: 10,
         },
         md: {
           canvasWidth: 400,
           canvasHeight: 300,
-          amount: 20,
+          amount: 25,
           candleWidth: 10,
         },
         lg: {
@@ -69,7 +67,8 @@ export default {
       candlesHover: false,
       infoCandles: {},
       mouse: { x: undefined, y: undefined },
-      prices: { high: 2, middle: 1, low: 0 },
+      candlesCoordsData: null,
+      candlesData: [],
       lastCandle: [],
     };
   },
@@ -97,46 +96,47 @@ export default {
         ? `${this.infoCandles.coords.y1}px`
         : `${this.infoCandles.coords.y2 - blockHeight}px`;
     },
+    currentNumberOfCandles() {
+      return this.candlesData.slice(
+        this.candlesData.length - this.candlesCanvasSize.amount
+      );
+    },
   },
   watch: {
     windowSize(val) {
       this.candlesCanvasSize = this.allCanvasSizes[val];
-      getUpdatePrice(this.curpair, (price) =>
-        this.workCandles(
-          price,
-          this.candlesCanvasSize.canvasWidth,
-          this.candlesCanvasSize.canvasHeight
-        )
-      );
-      console.log(val);
+      getUpdatePrice(this.curpair, (price) => this.workCandles(price));
     },
   },
   methods: {
     ...mapActions(["GET_CANDLES_FROM_API"]),
-    workCandles(price, canvasWidth, canvasHeight) {
+    workCandles(price) {
       const canvas = document.querySelector("#canvas");
-      if (!canvas) return;
+      if (!canvas || !this.currentNumberOfCandles) return;
       // vars
       const ctx = canvas.getContext("2d");
-      canvas.style.width = canvasWidth;
-      canvas.style.height = canvasHeight;
-      const width = (canvas.width = canvasWidth);
-      const height = (canvas.height = canvasHeight);
+      canvas.style.width = this.candlesCanvasSize.canvasWidth;
+      canvas.style.height = this.candlesCanvasSize.canvasHeight;
+      const width = (canvas.width = this.candlesCanvasSize.canvasWidth);
+      const height = (canvas.height = this.candlesCanvasSize.canvasHeight);
+      const closePriceIdx = 4;
       // vars
       this.candlePrices(
-        this.candlesData[this.candlesData.length - 1][4],
+        this.currentNumberOfCandles[this.currentNumberOfCandles.length - 1][
+          closePriceIdx
+        ],
         price
       );
       const candles = new Candles(
         ctx,
-        this.candlesData,
+        this.currentNumberOfCandles,
         width,
         height,
         this.candlesCanvasSize.candleWidth
       );
       candles.updateCanvas();
       candles.startWork();
-      this.allCandlesData = candles.allCandlesData;
+      this.candlesCoordsData = candles.allCandlesData;
       // remove animation, reset mouse
       if (!this.candlesHover) {
         this.mouse = { x: undefined, y: undefined };
@@ -145,7 +145,7 @@ export default {
     },
     hoverOnCandle() {
       this.infoCandles = {};
-      this.allCandlesData.forEach((candle) => {
+      this.candlesCoordsData.forEach((candle) => {
         const { coords, data } = candle;
         if (
           coords.x1 <= this.mouse.x &&
@@ -169,20 +169,12 @@ export default {
     },
     moveMouseOnCanvas(event) {
       this.mouse = { x: event.offsetX, y: event.offsetY };
-      if (this.allCandlesData) this.hoverOnCandle();
+      if (this.candlesCoordsData) this.hoverOnCandle();
     },
     createDateString(date) {
       return `${date.getFullYear()}-${
         date.getMonth() + 1
       }-${date.getDate()}T${date.getHours()}:${date.getMinutes()}:00`;
-    },
-    getAverageCost() {
-      const sortArr = (cb) => [...this.candlesData].sort((a, b) => cb(a, b))[0];
-      const lowArr = sortArr((a, b) => a[1] - b[1]) ?? [1, 2, 3];
-      const highArr = sortArr((a, b) => b[2] - a[2]) ?? [1, 2, 3];
-      this.prices.low = lowArr[1];
-      this.prices.high = highArr[2];
-      this.prices.middle = Math.floor((this.prices.low + this.prices.high) / 2);
     },
     candlePrices(closePrice, price) {
       if (
@@ -227,22 +219,8 @@ export default {
         dateStart,
         dateEnd,
       });
-      this.candlesData = this.CANDLES.slice(
-        this.CANDLES.length - this.candlesCanvasSize.amount
-      );
-      this.getAverageCost();
-      // this.workCandles(
-      //   price,
-      //   this.candlesCanvasSize.canvasWidth,
-      //   this.candlesCanvasSize.canvasHeight
-      // );
-      getUpdatePrice(this.curpair, (price) =>
-        this.workCandles(
-          price,
-          this.candlesCanvasSize.canvasWidth,
-          this.candlesCanvasSize.canvasHeight
-        )
-      );
+      this.candlesData = this.CANDLES;
+      getUpdatePrice(this.curpair, (price) => this.workCandles(price));
     },
   },
 };
